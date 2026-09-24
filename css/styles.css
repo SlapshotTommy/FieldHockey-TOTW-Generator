@@ -1,0 +1,155 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #eeeeee;
+    color: #202133;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+header {
+    background: #202133;
+    padding: 24px 30px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 30px;
+    letter-spacing: 1px;
+}
+
+header h2 {
+    margin: 5px 0 0;
+    color: #f2cf44;
+    font-size: 20px;
+}
+
+.app {
+    display: grid;
+    grid-template-columns: 420px minmax(0, 1fr);
+    gap: 25px;
+    max-width: 1500px;
+    margin: 25px auto;
+    padding: 0 25px 40px;
+}
+
+.controls,
+.preview {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.section-title {
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #f2cf44;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.team-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+label {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    margin-top: 5px;
+    padding: 8px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+}
+
+.hint {
+    margin: -5px 0 15px;
+    color: #666666;
+    font-size: 12px;
+}
+
+.player {
+    margin-bottom: 12px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 7px;
+}
+
+.player-title {
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.player-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 7px;
+}
+
+.player .reason {
+    margin-top: 7px;
+}
+
+button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 13px;
+
+    border: 0;
+    border-radius: 6px;
+
+    background: #202133;
+    color: #ffffff;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.canvas-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#totwCanvas {
+    display: block;
+
+    width: 100%;
+    max-width: 810px;
+    height: auto;
+
+    background: #202133;
+
+    box-shadow:
+        0 3px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 950px) {
+
+    .app {
+        grid-template-columns: 1fr;
+    }
+
+}
