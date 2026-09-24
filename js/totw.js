@@ -1,3 +1,13 @@
+// ====================================================
+// SAINTFIELD HOCKEY CLUB
+// TEAM OF THE WEEK GENERATOR
+// ====================================================
+
+
+// ====================================================
+// POSITIONS
+// ====================================================
+
 const positions = [
     "Goalkeeper",
     "Defender",
@@ -12,12 +22,17 @@ const positions = [
     "Forward"
 ];
 
+
+// ====================================================
+// SAMPLE DATA
+// ====================================================
+
 const samplePlayers = [
     ["Goalkeeper One", "Mens 1s", "Clean Sheet | POTM"],
     ["Defender One", "Ladies 1s", "POTM | 3-1 Win"],
     ["Defender Two", "Mens 2s", "1 Goal | 4-2 Win"],
     ["Defender Three", "Ladies 2s", "Clean Sheet | POTM"],
-    ["Defender Four", "Mens 3s", "2 Assists | 3-0 Win"],
+    ["Defender Four", "Mens 3s", "2 Goals | 3-0 Win"],
     ["Midfielder One", "Ladies 1s", "1 Goal | POTM"],
     ["Tommy Brown", "Mens 2s", "2 Goals | POTM | 4-1 Win"],
     ["Midfielder Three", "Ladies 3s", "2 Goals | 3-2 Win"],
@@ -32,6 +47,7 @@ const samplePlayers = [
 // ====================================================
 
 const pitchImage = new Image();
+
 pitchImage.src = "./assets/Pitch.png";
 
 
@@ -41,21 +57,30 @@ pitchImage.src = "./assets/Pitch.png";
 
 function buildPlayerInputs() {
 
-    const container = document.getElementById("players");
+    const container =
+        document.getElementById("players");
+
 
     positions.forEach((position, index) => {
 
-        const player = samplePlayers[index];
+        const player =
+            samplePlayers[index];
 
-        const div = document.createElement("div");
+
+        const div =
+            document.createElement("div");
+
         div.className = "player";
 
+
         div.innerHTML = `
+
             <div class="player-title">
                 ${index + 1}. ${position}
             </div>
 
             <div class="player-row">
+
                 <input
                     id="name-${index}"
                     value="${player[0]}"
@@ -65,6 +90,7 @@ function buildPlayerInputs() {
                     id="squad-${index}"
                     value="${player[1]}"
                     placeholder="Squad">
+
             </div>
 
             <input
@@ -72,7 +98,9 @@ function buildPlayerInputs() {
                 id="reason-${index}"
                 value="${player[2]}"
                 placeholder="Reasons separated with |">
+
         `;
+
 
         container.appendChild(div);
     });
@@ -80,13 +108,28 @@ function buildPlayerInputs() {
 
 
 // ====================================================
-// ROUNDED RECTANGLE
+// ROUNDED RECTANGLE HELPER
 // ====================================================
 
-function roundedRect(ctx, x, y, width, height, radius) {
+function roundedRect(
+    ctx,
+    x,
+    y,
+    width,
+    height,
+    radius
+) {
 
     ctx.beginPath();
-    ctx.roundRect(x, y, width, height, radius);
+
+    ctx.roundRect(
+        x,
+        y,
+        width,
+        height,
+        radius
+    );
+
     ctx.fill();
 }
 
@@ -95,74 +138,138 @@ function roundedRect(ctx, x, y, width, height, radius) {
 // DRAW PLAYER
 // ====================================================
 
-function drawPlayer(ctx, x, y, index) {
+function drawPlayer(
+    ctx,
+    x,
+    y,
+    index
+) {
+
+    // ------------------------------------------------
+    // READ PLAYER DATA
+    // ------------------------------------------------
 
     const name =
-        document.getElementById(`name-${index}`).value.trim();
+        document
+            .getElementById(`name-${index}`)
+            .value
+            .trim();
 
-    const squad =
-        document.getElementById(`squad-${index}`).value.trim();
 
     const reasonText =
-        document.getElementById(`reason-${index}`).value.trim();
-
-    const reasons = reasonText
-        .split("|")
-        .map(reason => reason.trim())
-        .filter(Boolean);
+        document
+            .getElementById(`reason-${index}`)
+            .value
+            .trim();
 
 
-    // ------------------------------------------------
-    // PLAYER MARKER
-    // ------------------------------------------------
+    // Split:
+    //
+    // 2 Goals | POTM | 4-1 Win
+    //
+    // into:
+    //
+    // 2 Goals
+    // POTM
+    // 4-1 Win
+
+    const reasons =
+        reasonText
+            .split("|")
+            .map(reason => reason.trim())
+            .filter(Boolean);
+
+
+    // =================================================
+    // PLAYER CIRCLE
+    // =================================================
 
     ctx.beginPath();
-    ctx.arc(x, y, 29, 0, Math.PI * 2);
+
+    ctx.arc(
+        x,
+        y,
+        29,
+        0,
+        Math.PI * 2
+    );
+
+
+    // Navy centre
 
     ctx.fillStyle = "#202133";
     ctx.fill();
 
+
+    // White ring
+
     ctx.lineWidth = 5;
-    ctx.strokeStyle = "#f2cf44";
+    ctx.strokeStyle = "#ffffff";
     ctx.stroke();
 
 
-    // Position / player number
+    // =================================================
+    // PLAYER NUMBER
+    // =================================================
 
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 21px Arial";
 
-    ctx.fillText(index + 1, x, y + 1);
+    ctx.font =
+        "bold 21px Arial";
 
 
-    // ------------------------------------------------
-    // NAME
-    // ------------------------------------------------
-
-    const nameY = y + 47;
-
-    ctx.font = "bold 20px Arial";
-
-    const nameWidth = Math.max(
-        145,
-        ctx.measureText(name.toUpperCase()).width + 24
+    ctx.fillText(
+        index + 1,
+        x,
+        y + 1
     );
 
-    ctx.fillStyle = "rgba(32, 33, 51, 0.96)";
+
+    // =================================================
+    // PLAYER NAME
+    // =================================================
+
+    const nameY =
+        y + 46;
+
+
+    ctx.font =
+        "bold 17px Arial";
+
+
+    const nameWidth =
+        Math.max(
+            125,
+            ctx.measureText(
+                name.toUpperCase()
+            ).width + 20
+        );
+
+
+    // Name background
+
+    ctx.fillStyle =
+        "rgba(32, 33, 51, 0.96)";
+
 
     roundedRect(
         ctx,
         x - nameWidth / 2,
-        nameY - 17,
+        nameY - 15,
         nameWidth,
-        34,
-        8
+        30,
+        7
     );
 
-    ctx.fillStyle = "#ffffff";
+
+    // Name text
+
+    ctx.fillStyle =
+        "#ffffff";
+
 
     ctx.fillText(
         name.toUpperCase(),
@@ -171,55 +278,32 @@ function drawPlayer(ctx, x, y, index) {
     );
 
 
-    // ------------------------------------------------
-    // SQUAD
-    // ------------------------------------------------
-
-    const squadY = nameY + 30;
-
-    ctx.font = "bold 16px Arial";
-
-    const squadWidth = Math.max(
-        88,
-        ctx.measureText(squad).width + 22
-    );
-
-    ctx.fillStyle = "#f2cf44";
-
-    roundedRect(
-        ctx,
-        x - squadWidth / 2,
-        squadY - 13,
-        squadWidth,
-        26,
-        7
-    );
-
-    ctx.fillStyle = "#202133";
-
-    ctx.fillText(
-        squad,
-        x,
-        squadY
-    );
-
-
-    // ------------------------------------------------
+    // =================================================
     // PERFORMANCE REASONS
-    // ------------------------------------------------
+    // =================================================
 
-    let reasonY = squadY + 29;
+    let reasonY =
+        nameY + 27;
 
-    ctx.font = "bold 15px Arial";
+
+    ctx.font =
+        "bold 15px Arial";
+
 
     reasons.forEach(reason => {
 
-        const reasonWidth = Math.max(
-            100,
-            ctx.measureText(reason).width + 20
-        );
+        const reasonWidth =
+            Math.max(
+                100,
+                ctx.measureText(reason).width + 20
+            );
 
-        ctx.fillStyle = "rgba(32, 33, 51, 0.92)";
+
+        // Reason bubble
+
+        ctx.fillStyle =
+            "rgba(32, 33, 51, 0.92)";
+
 
         roundedRect(
             ctx,
@@ -230,7 +314,12 @@ function drawPlayer(ctx, x, y, index) {
             6
         );
 
-        ctx.fillStyle = "#ffffff";
+
+        // Reason text
+
+        ctx.fillStyle =
+            "#ffffff";
+
 
         ctx.fillText(
             reason,
@@ -238,25 +327,33 @@ function drawPlayer(ctx, x, y, index) {
             reasonY
         );
 
+
+        // Move down for next reason
+
         reasonY += 26;
     });
 }
 
 
 // ====================================================
-// DRAW GRAPHIC
+// GENERATE GRAPHIC
 // ====================================================
 
 function generateGraphic() {
 
     const canvas =
-        document.getElementById("totwCanvas");
+        document.getElementById(
+            "totwCanvas"
+        );
+
 
     const ctx =
         canvas.getContext("2d");
 
 
-    // Clear canvas
+    // =================================================
+    // CLEAR CANVAS
+    // =================================================
 
     ctx.clearRect(
         0,
@@ -266,11 +363,13 @@ function generateGraphic() {
     );
 
 
-    // ------------------------------------------------
+    // =================================================
     // NAVY BACKGROUND
-    // ------------------------------------------------
+    // =================================================
 
-    ctx.fillStyle = "#202133";
+    ctx.fillStyle =
+        "#202133";
+
 
     ctx.fillRect(
         0,
@@ -280,15 +379,26 @@ function generateGraphic() {
     );
 
 
-    // ------------------------------------------------
+    // =================================================
     // HEADER
-    // ------------------------------------------------
+    // =================================================
 
-    ctx.textAlign = "center";
-    ctx.textBaseline = "alphabetic";
+    ctx.textAlign =
+        "center";
 
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 52px Arial";
+    ctx.textBaseline =
+        "alphabetic";
+
+
+    // Club name
+
+    ctx.fillStyle =
+        "#ffffff";
+
+
+    ctx.font =
+        "bold 52px Arial";
+
 
     ctx.fillText(
         "SAINTFIELD HOCKEY CLUB",
@@ -297,8 +407,15 @@ function generateGraphic() {
     );
 
 
-    ctx.fillStyle = "#f2cf44";
-    ctx.font = "bold 42px Arial";
+    // Team of the Week
+
+    ctx.fillStyle =
+        "#f2cf44";
+
+
+    ctx.font =
+        "bold 42px Arial";
+
 
     ctx.fillText(
         "TEAM OF THE WEEK",
@@ -307,15 +424,29 @@ function generateGraphic() {
     );
 
 
+    // =================================================
+    // SEASON / WEEKEND
+    // =================================================
+
     const season =
-        document.getElementById("season").value;
+        document
+            .getElementById("season")
+            .value;
+
 
     const weekend =
-        document.getElementById("weekend").value;
+        document
+            .getElementById("weekend")
+            .value;
 
 
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "23px Arial";
+    ctx.fillStyle =
+        "#ffffff";
+
+
+    ctx.font =
+        "23px Arial";
+
 
     ctx.fillText(
         `${season}  •  ${weekend}`,
@@ -324,17 +455,22 @@ function generateGraphic() {
     );
 
 
-    // ------------------------------------------------
+    // =================================================
     // WAIT FOR PITCH IMAGE
-    // ------------------------------------------------
+    // =================================================
 
     if (
         !pitchImage.complete ||
         pitchImage.naturalWidth === 0
     ) {
 
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "24px Arial";
+        ctx.fillStyle =
+            "#ffffff";
+
+
+        ctx.font =
+            "24px Arial";
+
 
         ctx.fillText(
             "Loading pitch...",
@@ -342,27 +478,38 @@ function generateGraphic() {
             canvas.height / 2
         );
 
+
         return;
     }
 
 
-    // ------------------------------------------------
-    // FIT PITCH INTO AVAILABLE SPACE
-    // ------------------------------------------------
+    // =================================================
+    // AVAILABLE PITCH AREA
+    // =================================================
 
     const areaX = 25;
+
     const areaY = 185;
+
 
     const areaWidth =
         canvas.width - 50;
 
-    const areaHeight =
-        canvas.height - areaY - 25;
 
+    const areaHeight =
+        canvas.height -
+        areaY -
+        25;
+
+
+    // =================================================
+    // PRESERVE IMAGE ASPECT RATIO
+    // =================================================
 
     const imageRatio =
         pitchImage.naturalWidth /
         pitchImage.naturalHeight;
+
 
     const areaRatio =
         areaWidth /
@@ -375,23 +522,48 @@ function generateGraphic() {
 
     if (imageRatio > areaRatio) {
 
-        drawWidth = areaWidth;
-        drawHeight = drawWidth / imageRatio;
+        drawWidth =
+            areaWidth;
+
+
+        drawHeight =
+            drawWidth /
+            imageRatio;
 
     } else {
 
-        drawHeight = areaHeight;
-        drawWidth = drawHeight * imageRatio;
+        drawHeight =
+            areaHeight;
+
+
+        drawWidth =
+            drawHeight *
+            imageRatio;
     }
 
 
+    // =================================================
+    // CENTRE PITCH
+    // =================================================
+
     const pitchX =
-        (canvas.width - drawWidth) / 2;
+        (
+            canvas.width -
+            drawWidth
+        ) / 2;
+
 
     const pitchY =
         areaY +
-        ((areaHeight - drawHeight) / 2);
+        (
+            areaHeight -
+            drawHeight
+        ) / 2;
 
+
+    // =================================================
+    // DRAW PITCH
+    // =================================================
 
     ctx.drawImage(
         pitchImage,
@@ -403,45 +575,91 @@ function generateGraphic() {
 
 
     // =================================================
-    // FIXED 1-4-3-3 FORMATION
+    // 1-4-3-3 FORMATION
     //
-    // X/Y are percentages of the pitch image.
-    // Team attacks towards the TOP.
+    // Coordinates are percentages of the pitch image.
+    //
+    // Lower Y = further up the pitch.
+    // Higher Y = further down the pitch.
+    //
+    // Team attacks towards the TOP goal.
     // =================================================
 
     const formation = [
 
-        // GK
+        // =============================================
+        // GOALKEEPER
+        // =============================================
+
         [0.50, 0.82],
 
-        // DEF
-        [0.18, 0.64],
-        [0.39, 0.64],
-        [0.61, 0.64],
-        [0.82, 0.64],
 
-        // MID
-        [0.27, 0.41],
-        [0.50, 0.41],
-        [0.73, 0.41],
+        // =============================================
+        // DEFENDERS
+        //
+        // Outside defenders push slightly higher.
+        //
+        // Central defenders sit deeper.
+        // =============================================
 
-        // FWD
-        [0.27, 0.17],
-        [0.50, 0.17],
-        [0.73, 0.17]
+        [0.18, 0.61],     // Defender 1
+
+        [0.39, 0.69],     // Defender 2
+
+        [0.61, 0.69],     // Defender 3
+
+        [0.82, 0.61],     // Defender 4
+
+
+        // =============================================
+        // MIDFIELDERS
+        // =============================================
+
+        [0.27, 0.41],     // Midfielder 1
+
+        [0.50, 0.41],     // Midfielder 2
+
+        [0.73, 0.41],     // Midfielder 3
+
+
+        // =============================================
+        // FORWARDS
+        //
+        // Centre forward leads the line.
+        //
+        // Outside forwards sit slightly deeper.
+        // =============================================
+
+        [0.27, 0.21],     // Forward 1
+
+        [0.50, 0.17],     // Forward 2
+
+        [0.73, 0.21]      // Forward 3
     ];
 
+
+    // =================================================
+    // DRAW ALL PLAYERS
+    // =================================================
 
     formation.forEach(
         ([relativeX, relativeY], index) => {
 
             const x =
                 pitchX +
-                (drawWidth * relativeX);
+                (
+                    drawWidth *
+                    relativeX
+                );
+
 
             const y =
                 pitchY +
-                (drawHeight * relativeY);
+                (
+                    drawHeight *
+                    relativeY
+                );
+
 
             drawPlayer(
                 ctx,
@@ -455,11 +673,13 @@ function generateGraphic() {
 
 
 // ====================================================
-// BUTTON
+// GENERATE BUTTON
 // ====================================================
 
 document
-    .getElementById("generateButton")
+    .getElementById(
+        "generateButton"
+    )
     .addEventListener(
         "click",
         generateGraphic
@@ -472,10 +692,21 @@ document
 
 buildPlayerInputs();
 
+
+// Generate once pitch has loaded
+
 pitchImage.onload = () => {
+
     generateGraphic();
+
 };
 
+
+// If browser already cached the pitch,
+// generate immediately.
+
 if (pitchImage.complete) {
+
     generateGraphic();
+
 }
