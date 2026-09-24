@@ -601,14 +601,14 @@ function generateGraphic() {
         //
         // Central defenders sit deeper.
         // =============================================
-
-        [0.18, 0.61],     // Defender 1
-
+        
+        [0.23, 0.61],     // Defender 1 - moved right
+        
         [0.39, 0.69],     // Defender 2
-
+        
         [0.61, 0.69],     // Defender 3
-
-        [0.82, 0.61],     // Defender 4
+        
+        [0.77, 0.61],     // Defender 4 - moved left
 
 
         // =============================================
