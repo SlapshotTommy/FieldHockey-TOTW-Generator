@@ -236,8 +236,8 @@ function drawPlayer(
     ctx.fillStyle = "#ffffff";
 
 
-    // SWEEP needs a smaller font to fit comfortably
-    // inside the same circle.
+    // SWEEP support remains here in case we
+    // decide to use that label again later.
 
     if (positionLabels[index] === "SWEEP") {
 
@@ -609,7 +609,7 @@ function generateGraphic() {
     //
     // GK
     //
-    // LB     SWEEP     CB     RB
+    // LB       CB       CB       RB
     //
     // LM       CM       RM
     //
@@ -632,7 +632,7 @@ function generateGraphic() {
 
         [0.23, 0.61],     // LB
 
-        [0.39, 0.69],     // SWEEP
+        [0.39, 0.69],     // CB
 
         [0.61, 0.69],     // CB
 
@@ -707,6 +707,102 @@ document
     .addEventListener(
         "click",
         generateGraphic
+    );
+
+
+// ====================================================
+// DOWNLOAD PNG
+// ====================================================
+
+function downloadGraphic() {
+
+    // Regenerate first so the downloaded image always
+    // contains the latest values entered in the form.
+
+    generateGraphic();
+
+
+    const canvas =
+        document.getElementById(
+            "totwCanvas"
+        );
+
+
+    // ------------------------------------------------
+    // BUILD FILE NAME
+    // ------------------------------------------------
+
+    const season =
+        document
+            .getElementById("season")
+            .value
+            .trim()
+            .replace(/\//g, "-");
+
+
+    const weekend =
+        document
+            .getElementById("weekend")
+            .value
+            .trim()
+            .replace(/\s+/g, "-");
+
+
+    const filename =
+        `Saintfield-TOTW-${season}-${weekend}.png`;
+
+
+    // ------------------------------------------------
+    // CREATE PNG
+    // ------------------------------------------------
+
+    const image =
+        canvas.toDataURL(
+            "image/png"
+        );
+
+
+    // ------------------------------------------------
+    // DOWNLOAD PNG
+    // ------------------------------------------------
+
+    const link =
+        document.createElement("a");
+
+
+    link.download =
+        filename;
+
+
+    link.href =
+        image;
+
+
+    document.body.appendChild(
+        link
+    );
+
+
+    link.click();
+
+
+    document.body.removeChild(
+        link
+    );
+}
+
+
+// ====================================================
+// DOWNLOAD BUTTON
+// ====================================================
+
+document
+    .getElementById(
+        "downloadButton"
+    )
+    .addEventListener(
+        "click",
+        downloadGraphic
     );
 
 
