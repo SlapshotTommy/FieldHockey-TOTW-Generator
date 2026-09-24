@@ -3,560 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Football Lineup Generator - Interactive Demo</title>
-    <meta name="description" content="Create beautiful football/soccer lineup visualizations with different formations, team colors, and layouts. Try the interactive demo!">
+    <title>Saintfield Hockey - Team of the Week</title>
+
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            background: #f1f2f5;
+            color: #202133;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .subtitle {
-            color: #666;
-            font-size: 18px;
-            margin-bottom: 15px;
-        }
-        .github-link {
-            display: inline-block;
-            background: #333;
+
+        header {
+            background: #202133;
             color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            margin: 5px;
-        }
-        .github-link:hover {
-            background: #555;
-        }
-        .controls {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .lineup-container {
+            padding: 24px;
             text-align: center;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 5px;
+
+        header h1 {
+            margin: 0;
+            font-size: 30px;
         }
-        button:hover {
-            background: #45a049;
-        }
-        button.active {
-            background: #45a049;
-        }
-        select, input {
-            padding: 8px;
-            margin: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        input[type="color"] {
-            width: 60px;
-            height: 40px;
-            padding: 2px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            cursor: pointer;
-            background: none;
-        }
-        input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
-            border: none;
-            border-radius: 4px;
-        }
-        input[type="color"]::-webkit-color-swatch {
-            border: none;
-            border-radius: 4px;
-        }
-        .color-input-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .formation-buttons {
-            margin: 10px 0;
-        }
-        canvas {
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            max-width: 100%;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            align-items: center;
-        }
-        .player-lists {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .team-list {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        .team-list h3 {
-            margin-top: 0;
-            text-align: center;
-            padding: 10px;
-            border-radius: 4px;
-            color: white;
+
+        header p {
+            margin: 7px 0 0;
+            color: #f2cf44;
             font-weight: bold;
         }
-        .player-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+
+        .app {
+            max-width: 1500px;
+            margin: 25px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 25px;
         }
-        .player-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
+
+        .panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.08);
         }
-        .player-item:last-child {
-            border-bottom: none;
+
+        h2 {
+            margin-top: 0;
         }
-        .player-number {
-            background: #333;
+
+        .settings {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .player {
+            border-top: 1px solid #ddd;
+            padding: 14px 0;
+        }
+
+        .player-title {
+            font-weight: bold;
+            color: #202133;
+            margin-bottom: 8px;
+        }
+
+        .player-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 8px;
+        }
+
+        .reason {
+            margin-top: 6px;
+        }
+
+        button {
+            width: 100%;
+            border: 0;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #202133;
             color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            opacity: .9;
+        }
+
+        .preview {
+            min-height: 850px;
+            background: #202133;
+            border-radius: 12px;
+            padding: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            margin-right: 10px;
         }
-        .player-info {
-            display: flex;
-            align-items: center;
-            flex: 1;
+
+        canvas {
+            max-width: 100%;
+            background: white;
         }
-        .player-name {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-        .player-position {
-            color: #666;
-            font-size: 12px;
-            text-transform: capitalize;
+
+        @media (max-width: 1000px) {
+            .app {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>⚽ Football Lineup Generator</h1>
-            <p class="subtitle">Create beautiful football/soccer lineup visualizations with different formations, team colors, and layouts</p>
-            <a href="https://github.com/ncamaa/football-lineup-generator" class="github-link" target="_blank">📦 View on GitHub</a>
-            <a href="https://www.npmjs.com/package/football-lineup-generator" class="github-link" target="_blank">📥 Install from NPM</a>
-        </div>
-        
-        <div class="controls">
-            <h3>Team Setup</h3>
-            <div class="grid">
-                <label>Home Team: <input type="text" id="homeTeam" value="Arsenal" /></label>
-                <label>Away Team: <input type="text" id="awayTeam" value="Chelsea" /></label>
-            </div>
-            
-            <div class="formation-buttons">
-                <h4>Quick Formations:</h4>
-                <button onclick="loadFormation('4-3-3')" class="formation-btn active">4-3-3</button>
-                <button onclick="loadFormation('4-4-2')" class="formation-btn">4-4-2</button>
-                <button onclick="loadFormation('3-5-2')" class="formation-btn">3-5-2</button>
-                <button onclick="loadFormation('4-2-3-1')" class="formation-btn">4-2-3-1</button>
-            </div>
-            
-            <h4>Layout Options:</h4>
-            <div class="grid">
-                <label>Layout Type: 
-                    <select id="layoutType">
-                        <option value="split_pitch" selected>Split Pitch (Separate fields)</option>
-                        <option value="half_pitch">Half Pitch (Teams in their halves)</option>
-                        <option value="full_pitch">Full Pitch (Both teams across field)</option>
-                    </select>
-                </label>
-                <label>Canvas Size: 
-                    <select id="canvasSize">
-                        <option value="800x600">800x600</option>
-                        <option value="1000x700" selected>1000x700</option>
-                        <option value="1200x800">1200x800</option>
-                    </select>
-                </label>
-            </div>
 
-            <h4>Styling Options:</h4>
-            <div class="grid">
-                <div class="color-input-container">
-                    <label>Field Color:</label>
-                    <input type="color" id="fieldColor" value="#4CAF50" />
-                    
-                </div>
-                <div class="color-input-container">
-                    <label>Home Team Color:</label>
-                    <input type="color" id="homeColor" value="#FF5722" />
-                    
-                </div>
-                <div class="color-input-container">
-                    <label>Away Team Color:</label>
-                    <input type="color" id="awayColor" value="#2196F3" />
-                </div>
-            </div>
-            
-            <br><br>
-            <button onclick="generateLineupExample()">Generate Lineup</button>
+<header>
+    <h1>SAINTFIELD HOCKEY CLUB</h1>
+    <p>TEAM OF THE WEEK GENERATOR</p>
+</header>
+
+<div class="app">
+
+    <div class="panel">
+
+        <h2>Team of the Week</h2>
+
+        <div class="settings">
+            <label>
+                Season
+                <input id="season" value="2026/27">
+            </label>
+
+            <label>
+                Weekend
+                <input id="weekend" value="Weekend 2">
+            </label>
         </div>
 
-        <div class="lineup-container">
-            <div id="lineup-display">
-                <p>Click "Generate Lineup" to see the visualization!</p>
-            </div>
-        </div>
+        <div id="players"></div>
+
+        <button onclick="generateGraphic()">
+            Generate TOTW
+        </button>
+
     </div>
 
-    <script type="module">
-        // Import from the compiled library
-        import { generateLineup, Team, Position, LayoutType } from './dist/index.js';
+    <div class="preview">
+        <canvas id="totwCanvas" width="1080" height="1350"></canvas>
+    </div>
 
-        // Formation templates
-        const formations = {
-            '4-3-3': {
-                home: [
-                    { name: "Ramsdale", number: 1, position: Position.GOALKEEPER },
-                    { name: "White", number: 4, position: Position.RIGHT_BACK },
-                    { name: "Saliba", number: 12, position: Position.CENTER_BACK },
-                    { name: "Gabriel", number: 6, position: Position.CENTER_BACK },
-                    { name: "Zinchenko", number: 35, position: Position.LEFT_BACK },
-                    { name: "Partey", number: 5, position: Position.DEFENSIVE_MIDFIELDER },
-                    { name: "Odegaard", number: 8, position: Position.CENTER_MIDFIELDER },
-                    { name: "Rice", number: 41, position: Position.CENTER_MIDFIELDER },
-                    { name: "Saka", number: 7, position: Position.RIGHT_WINGER },
-                    { name: "Jesus", number: 9, position: Position.CENTER_FORWARD },
-                    { name: "Martinelli", number: 11, position: Position.LEFT_WINGER },
-                    { name: "Raya", number: 22, position: Position.SUBSTITUTE },
-                    { name: "Nketiah", number: 14, position: Position.SUBSTITUTE },
-                    { name: "Smith Rowe", number: 32, position: Position.SUBSTITUTE }
-                ],
-                away: [
-                    { name: "Kepa", number: 1, position: Position.GOALKEEPER },
-                    { name: "James", number: 24, position: Position.RIGHT_BACK },
-                    { name: "Silva", number: 6, position: Position.CENTER_BACK },
-                    { name: "Koulibaly", number: 26, position: Position.CENTER_BACK },
-                    { name: "Chilwell", number: 21, position: Position.LEFT_BACK },
-                    { name: "Fernandez", number: 8, position: Position.DEFENSIVE_MIDFIELDER },
-                    { name: "Kovacic", number: 17, position: Position.CENTER_MIDFIELDER },
-                    { name: "Mount", number: 19, position: Position.CENTER_MIDFIELDER },
-                    { name: "Sterling", number: 7, position: Position.RIGHT_WINGER },
-                    { name: "Jackson", number: 15, position: Position.CENTER_FORWARD },
-                    { name: "Mudryk", number: 10, position: Position.LEFT_WINGER },
-                    { name: "Sanchez", number: 13, position: Position.SUBSTITUTE },
-                    { name: "Broja", number: 18, position: Position.SUBSTITUTE },
-                    { name: "Gallagher", number: 23, position: Position.SUBSTITUTE }
-                ]
-            },
-            '4-4-2': {
-                home: [
-                    { name: "Ramsdale", number: 1, position: Position.GOALKEEPER },
-                    { name: "White", number: 4, position: Position.RIGHT_BACK },
-                    { name: "Saliba", number: 12, position: Position.CENTER_BACK },
-                    { name: "Gabriel", number: 6, position: Position.CENTER_BACK },
-                    { name: "Zinchenko", number: 35, position: Position.LEFT_BACK },
-                    { name: "Saka", number: 7, position: Position.RIGHT_MIDFIELDER },
-                    { name: "Partey", number: 5, position: Position.CENTER_MIDFIELDER },
-                    { name: "Rice", number: 41, position: Position.CENTER_MIDFIELDER },
-                    { name: "Martinelli", number: 11, position: Position.LEFT_MIDFIELDER },
-                    { name: "Jesus", number: 9, position: Position.CENTER_FORWARD },
-                    { name: "Nketiah", number: 14, position: Position.CENTER_FORWARD }
-                ],
-                away: [
-                    { name: "Kepa", number: 1, position: Position.GOALKEEPER },
-                    { name: "James", number: 24, position: Position.RIGHT_BACK },
-                    { name: "Silva", number: 6, position: Position.CENTER_BACK },
-                    { name: "Koulibaly", number: 26, position: Position.CENTER_BACK },
-                    { name: "Chilwell", number: 21, position: Position.LEFT_BACK },
-                    { name: "Sterling", number: 7, position: Position.RIGHT_MIDFIELDER },
-                    { name: "Fernandez", number: 8, position: Position.CENTER_MIDFIELDER },
-                    { name: "Kovacic", number: 17, position: Position.CENTER_MIDFIELDER },
-                    { name: "Mudryk", number: 10, position: Position.LEFT_MIDFIELDER },
-                    { name: "Jackson", number: 15, position: Position.CENTER_FORWARD },
-                    { name: "Broja", number: 18, position: Position.CENTER_FORWARD }
-                ]
-            },
-            '3-5-2': {
-                home: [
-                    { name: "Ramsdale", number: 1, position: Position.GOALKEEPER },
-                    { name: "White", number: 4, position: Position.CENTER_BACK },
-                    { name: "Saliba", number: 12, position: Position.CENTER_BACK },
-                    { name: "Gabriel", number: 6, position: Position.CENTER_BACK },
-                    { name: "Saka", number: 7, position: Position.RIGHT_MIDFIELDER },
-                    { name: "Partey", number: 5, position: Position.DEFENSIVE_MIDFIELDER },
-                    { name: "Rice", number: 41, position: Position.CENTER_MIDFIELDER },
-                    { name: "Odegaard", number: 8, position: Position.ATTACKING_MIDFIELDER },
-                    { name: "Martinelli", number: 11, position: Position.LEFT_MIDFIELDER },
-                    { name: "Jesus", number: 9, position: Position.CENTER_FORWARD },
-                    { name: "Nketiah", number: 14, position: Position.CENTER_FORWARD }
-                ],
-                away: [
-                    { name: "Kepa", number: 1, position: Position.GOALKEEPER },
-                    { name: "James", number: 24, position: Position.CENTER_BACK },
-                    { name: "Silva", number: 6, position: Position.CENTER_BACK },
-                    { name: "Koulibaly", number: 26, position: Position.CENTER_BACK },
-                    { name: "Sterling", number: 7, position: Position.RIGHT_MIDFIELDER },
-                    { name: "Fernandez", number: 8, position: Position.DEFENSIVE_MIDFIELDER },
-                    { name: "Kovacic", number: 17, position: Position.CENTER_MIDFIELDER },
-                    { name: "Mount", number: 19, position: Position.ATTACKING_MIDFIELDER },
-                    { name: "Mudryk", number: 10, position: Position.LEFT_MIDFIELDER },
-                    { name: "Jackson", number: 15, position: Position.CENTER_FORWARD },
-                    { name: "Broja", number: 18, position: Position.CENTER_FORWARD }
-                ]
-            },
-            '4-2-3-1': {
-                home: [
-                    { name: "Ramsdale", number: 1, position: Position.GOALKEEPER },
-                    { name: "White", number: 4, position: Position.RIGHT_BACK },
-                    { name: "Saliba", number: 12, position: Position.CENTER_BACK },
-                    { name: "Gabriel", number: 6, position: Position.CENTER_BACK },
-                    { name: "Zinchenko", number: 35, position: Position.LEFT_BACK },
-                    { name: "Partey", number: 5, position: Position.DEFENSIVE_MIDFIELDER },
-                    { name: "Rice", number: 41, position: Position.DEFENSIVE_MIDFIELDER },
-                    { name: "Saka", number: 7, position: Position.RIGHT_WINGER },
-                    { name: "Odegaard", number: 8, position: Position.ATTACKING_MIDFIELDER },
-                    { name: "Martinelli", number: 11, position: Position.LEFT_WINGER },
-                    { name: "Jesus", number: 9, position: Position.CENTER_FORWARD }
-                ],
-                away: [
-                    { name: "Kepa", number: 1, position: Position.GOALKEEPER },
-                    { name: "James", number: 24, position: Position.RIGHT_BACK },
-                    { name: "Silva", number: 6, position: Position.CENTER_BACK },
-                    { name: "Koulibaly", number: 26, position: Position.CENTER_BACK },
-                    { name: "Chilwell", number: 21, position: Position.LEFT_BACK },
-                    { name: "Fernandez", number: 8, position: Position.DEFENSIVE_MIDFIELDER },
-                    { name: "Kovacic", number: 17, position: Position.DEFENSIVE_MIDFIELDER },
-                    { name: "Sterling", number: 7, position: Position.RIGHT_WINGER },
-                    { name: "Mount", number: 19, position: Position.ATTACKING_MIDFIELDER },
-                    { name: "Mudryk", number: 10, position: Position.LEFT_WINGER },
-                    { name: "Jackson", number: 15, position: Position.CENTER_FORWARD }
-                ]
-            }
-        };
+</div>
 
-        let currentFormation = '4-3-3';
+<script>
 
-        // Helper function to format position names
-        function formatPosition(position) {
-            return position.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        }
+const positions = [
+    "Goalkeeper",
+    "Defender",
+    "Defender",
+    "Defender",
+    "Defender",
+    "Midfielder",
+    "Midfielder",
+    "Midfielder",
+    "Forward",
+    "Forward",
+    "Forward"
+];
 
-        // Function to create player lists HTML
-        function createPlayerLists(lineupData, homeColor, awayColor) {
-            const homeTeamPlayers = lineupData.homeTeam.players.filter(p => p.position !== Position.SUBSTITUTE);
-            const awayTeamPlayers = lineupData.awayTeam.players.filter(p => p.position !== Position.SUBSTITUTE);
-            
-            const homeSubstitutes = lineupData.homeTeam.players.filter(p => p.position === Position.SUBSTITUTE);
-            const awaySubstitutes = lineupData.awayTeam.players.filter(p => p.position === Position.SUBSTITUTE);
+const samplePlayers = [
+    ["Goalkeeper One", "Mens 1s", "Clean Sheet | POTM"],
+    ["Defender One", "Ladies 1s", "POTM | 3-1 Win"],
+    ["Defender Two", "Mens 2s", "1 Goal | 4-2 Win"],
+    ["Defender Three", "Ladies 2s", "Clean Sheet | POTM"],
+    ["Defender Four", "Mens 3s", "2 Assists | 3-0 Win"],
+    ["Midfielder One", "Ladies 1s", "1 Goal | POTM"],
+    ["Tommy Brown", "Mens 2s", "2 Goals | POTM | 4-1 Win"],
+    ["Midfielder Three", "Ladies 3s", "2 Goals | 3-2 Win"],
+    ["Forward One", "Mens 1s", "Hat-trick | POTM"],
+    ["Forward Two", "Ladies 2s", "2 Goals | 4-0 Win"],
+    ["Forward Three", "Mens 3s", "1 Goal | POTM"]
+];
 
-            return `
-                <div class="player-lists">
-                    <div class="team-list home-team">
-                        <h3 style="background-color: ${homeColor}">${lineupData.homeTeam.name}</h3>
-                        <ul class="player-list">
-                            ${homeTeamPlayers.map(player => `
-                                <li class="player-item">
-                                    <div class="player-info">
-                                        <div class="player-number">${player.player.jerseyNumber || '?'}</div>
-                                        <span class="player-name">${player.player.name}</span>
-                                    </div>
-                                    <span class="player-position">${formatPosition(player.position)}</span>
-                                </li>
-                            `).join('')}
-                            ${homeSubstitutes.length > 0 ? `
-                                <li style="margin-top: 10px; padding-top: 10px; border-top: 2px solid #ddd; font-weight: bold; color: #666;">Substitutes</li>
-                                ${homeSubstitutes.map(player => `
-                                    <li class="player-item">
-                                        <div class="player-info">
-                                            <div class="player-number">${player.player.jerseyNumber || '?'}</div>
-                                            <span class="player-name">${player.player.name}</span>
-                                        </div>
-                                        <span class="player-position">${formatPosition(player.position)}</span>
-                                    </li>
-                                `).join('')}
-                            ` : ''}
-                        </ul>
-                    </div>
-                    <div class="team-list away-team">
-                        <h3 style="background-color: ${awayColor}">${lineupData.awayTeam.name}</h3>
-                        <ul class="player-list">
-                            ${awayTeamPlayers.map(player => `
-                                <li class="player-item">
-                                    <div class="player-info">
-                                        <div class="player-number">${player.player.jerseyNumber || '?'}</div>
-                                        <span class="player-name">${player.player.name}</span>
-                                    </div>
-                                    <span class="player-position">${formatPosition(player.position)}</span>
-                                </li>
-                            `).join('')}
-                            ${awaySubstitutes.length > 0 ? `
-                                <li style="margin-top: 10px; padding-top: 10px; border-top: 2px solid #ddd; font-weight: bold; color: #666;">Substitutes</li>
-                                ${awaySubstitutes.map(player => `
-                                    <li class="player-item">
-                                        <div class="player-info">
-                                            <div class="player-number">${player.player.jerseyNumber || '?'}</div>
-                                            <span class="player-name">${player.player.name}</span>
-                                        </div>
-                                        <span class="player-position">${formatPosition(player.position)}</span>
-                                    </li>
-                                `).join('')}
-                            ` : ''}
-                        </ul>
-                    </div>
-                </div>
-            `;
-        }
+function buildPlayerInputs() {
 
-        // Make functions available globally for onclick handlers
-        window.loadFormation = function(formation) {
-            currentFormation = formation;
-            
-            // Update button states
-            document.querySelectorAll('.formation-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`button[onclick*="${formation}"]`).classList.add('active');
-        };
+    const container = document.getElementById("players");
 
-        window.generateLineupExample = function() {
-            const homeTeamName = document.getElementById('homeTeam').value;
-            const awayTeamName = document.getElementById('awayTeam').value;
-            const fieldColor = document.getElementById('fieldColor').value;
-            const homeColor = document.getElementById('homeColor').value;
-            const awayColor = document.getElementById('awayColor').value;
-            const canvasSize = document.getElementById('canvasSize').value.split('x');
-            const layoutType = document.getElementById('layoutType').value;
+    positions.forEach((position, index) => {
 
-            const formation = formations[currentFormation];
-            
-            const lineupData = {
-                homeTeam: {
-                    name: homeTeamName,
-                    players: formation.home.map((player, index) => ({
-                        player: {
-                            id: index + 1,
-                            name: player.name,
-                            jerseyNumber: player.number
-                        },
-                        team: Team.RED,
-                        position: player.position
-                    }))
-                },
-                awayTeam: {
-                    name: awayTeamName,
-                    players: formation.away.map((player, index) => ({
-                        player: {
-                            id: index + 12,
-                            name: player.name,
-                            jerseyNumber: player.number
-                        },
-                        team: Team.YELLOW,
-                        position: player.position
-                    }))
-                }
-            };
+        const player = samplePlayers[index];
 
-            const config = {
-                width: parseInt(canvasSize[0]),
-                height: parseInt(canvasSize[1]),
-                layoutType: layoutType,
-                fieldColor: fieldColor,
-                homeTeamColor: homeColor,
-                awayTeamColor: awayColor
-            };
+        const div = document.createElement("div");
+        div.className = "player";
 
-            try {
-                const canvas = generateLineup(lineupData, config);
-                
-                const display = document.getElementById('lineup-display');
-                display.innerHTML = '';
-                display.appendChild(canvas);
-                
-                // Add player lists below the canvas
-                const playerListsHTML = createPlayerLists(lineupData, homeColor, awayColor);
-                display.insertAdjacentHTML('beforeend', playerListsHTML);
-            } catch (error) {
-                console.error('Error generating lineup:', error);
-                const display = document.getElementById('lineup-display');
-                display.innerHTML = '<p style="color: red;">Error generating lineup: ' + error.message + '</p>';
-            }
-        };
+        div.innerHTML = `
+            <div class="player-title">
+                ${index + 1}. ${position}
+            </div>
 
-        // Update color previews when colors change
-        function updateColorPreview(colorInput, previewElement) {
-            previewElement.style.backgroundColor = colorInput.value;
-        }
+            <div class="player-row">
+                <input
+                    id="name-${index}"
+                    value="${player[0]}"
+                    placeholder="Player name">
 
-        // Handle automatic lineup generation and control changes
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add event listeners for automatic lineup generation
-            const layoutTypeSelect = document.getElementById('layoutType');
-            const canvasSizeSelect = document.getElementById('canvasSize');
-            const fieldColorInput = document.getElementById('fieldColor');
-            const homeColorInput = document.getElementById('homeColor');
-            const awayColorInput = document.getElementById('awayColor');
-            const homeTeamInput = document.getElementById('homeTeam');
-            const awayTeamInput = document.getElementById('awayTeam');
+                <input
+                    id="squad-${index}"
+                    value="${player[1]}"
+                    placeholder="Squad">
+            </div>
 
-            // Auto-generate lineup when layout changes
-            layoutTypeSelect.addEventListener('change', function() {
-                generateLineupExample();
-            });
+            <input
+                class="reason"
+                id="reason-${index}"
+                value="${player[2]}"
+                placeholder="Reasons separated with |">
+        `;
 
-            // Auto-generate lineup when other controls change
-            [canvasSizeSelect, fieldColorInput, homeColorInput, awayColorInput, homeTeamInput, awayTeamInput].forEach(control => {
-                control.addEventListener('change', function() {
-                    generateLineupExample();
-                });
-            });
+        container.appendChild(div);
+    });
+}
 
-            // Generate initial lineup
-            setTimeout(generateLineupExample, 500);
-        });
-    </script>
+function generateGraphic() {
+
+    const canvas = document.getElementById("totwCanvas");
+    const ctx = canvas.getContext("2d");
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Temporary background.
+    // The field-hockey pitch comes next.
+    ctx.fillStyle = "#202133";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.textAlign = "center";
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 52px Arial";
+    ctx.fillText(
+        "SAINTFIELD HOCKEY CLUB",
+        canvas.width / 2,
+        80
+    );
+
+    ctx.fillStyle = "#f2cf44";
+    ctx.font = "bold 42px Arial";
+    ctx.fillText(
+        "TEAM OF THE WEEK",
+        canvas.width / 2,
+        135
+    );
+
+    const season =
+        document.getElementById("season").value;
+
+    const weekend =
+        document.getElementById("weekend").value;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "24px Arial";
+    ctx.fillText(
+        `${season} • ${weekend}`,
+        canvas.width / 2,
+        180
+    );
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "28px Arial";
+
+    ctx.fillText(
+        "TOTW pitch renderer coming next...",
+        canvas.width / 2,
+        canvas.height / 2
+    );
+}
+
+buildPlayerInputs();
+generateGraphic();
+
+</script>
+
 </body>
-</html> 
+</html>
