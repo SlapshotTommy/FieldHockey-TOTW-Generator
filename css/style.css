@@ -6,8 +6,13 @@ body {
     margin: 0;
     background: #eeeeee;
     color: #202133;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Barlow Condensed", Arial, Helvetica, sans-serif;
 }
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 header {
     background: #202133;
@@ -19,84 +24,132 @@ header h1 {
     margin: 0;
     color: #ffffff;
     font-size: 30px;
-    letter-spacing: 1px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
 }
 
 header h2 {
     margin: 5px 0 0;
     color: #f2cf44;
     font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 1px;
 }
+
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
 
 .app {
     display: grid;
     grid-template-columns: 420px minmax(0, 1fr);
     gap: 25px;
+
     max-width: 1500px;
+
     margin: 25px auto;
+
     padding: 0 25px 40px;
 }
 
 .controls,
 .preview {
     background: #ffffff;
+
     border-radius: 10px;
+
     padding: 20px;
 }
+
+
+/* =========================================================
+   SECTION HEADINGS
+   ========================================================= */
 
 .section-title {
     margin-top: 22px;
     margin-bottom: 15px;
+
     padding-bottom: 8px;
+
     border-bottom: 3px solid #f2cf44;
-    font-size: 20px;
-    font-weight: bold;
+
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
 }
 
 .section-title:first-child {
     margin-top: 0;
 }
 
+
+/* =========================================================
+   TEAM DETAILS
+   ========================================================= */
+
 .team-details {
     display: grid;
+
     grid-template-columns: 1fr 1fr;
+
     gap: 10px;
+
     margin-bottom: 25px;
 }
 
 label {
-    font-size: 13px;
-    font-weight: bold;
+    font-size: 14px;
+    font-weight: 700;
 }
 
 input,
 textarea {
     width: 100%;
+
     margin-top: 5px;
+
     padding: 8px;
+
     border: 1px solid #cccccc;
+
     border-radius: 5px;
-    font-family: Arial, Helvetica, sans-serif;
+
+    font-family: "Barlow Condensed", Arial, Helvetica, sans-serif;
+
+    font-size: 16px;
 }
 
 textarea {
     min-height: 130px;
+
     resize: vertical;
-    font-size: 12px;
+
+    font-size: 14px;
 }
+
+
+/* =========================================================
+   HINTS / IMPORT STATUS
+   ========================================================= */
 
 .hint {
     margin: -5px 0 15px;
+
     color: #666666;
-    font-size: 12px;
+
+    font-size: 14px;
     line-height: 1.4;
 }
 
 .import-status {
     min-height: 20px;
+
     margin-top: 10px;
-    font-size: 12px;
-    font-weight: bold;
+
+    font-size: 14px;
+    font-weight: 700;
 }
 
 .import-status.success {
@@ -107,12 +160,22 @@ textarea {
     color: #b42318;
 }
 
+
+/* =========================================================
+   PLAYER EDITOR
+   ========================================================= */
+
 .player {
     margin-bottom: 12px;
+
     padding: 10px;
+
     background: #f5f5f5;
+
     border: 2px solid transparent;
+
     border-radius: 7px;
+
     transition:
         border-color 0.15s ease,
         background 0.15s ease;
@@ -120,18 +183,22 @@ textarea {
 
 .player.swap-selected {
     border-color: #f2cf44;
+
     background: #fffbea;
 }
 
 .player-title {
     margin-bottom: 7px;
-    font-size: 13px;
-    font-weight: bold;
+
+    font-size: 15px;
+    font-weight: 800;
 }
 
 .player-row {
     display: grid;
+
     grid-template-columns: 2fr 1fr;
+
     gap: 7px;
 }
 
@@ -143,16 +210,33 @@ textarea {
     margin-top: 7px;
 }
 
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
 button {
     width: 100%;
+
     margin-top: 10px;
+
     padding: 13px;
+
     border: 0;
+
     border-radius: 6px;
+
     background: #202133;
+
     color: #ffffff;
-    font-size: 16px;
-    font-weight: bold;
+
+    font-family: "Barlow Condensed", Arial, Helvetica, sans-serif;
+
+    font-size: 18px;
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+
     cursor: pointer;
 }
 
@@ -162,29 +246,53 @@ button:hover {
 
 .swap-button {
     margin-top: 0;
+
     padding: 8px 10px;
+
     background: #f2cf44;
+
     color: #202133;
-    font-size: 12px;
+
+    font-size: 14px;
+    font-weight: 800;
 }
+
+
+/* =========================================================
+   CANVAS
+   ========================================================= */
 
 .canvas-wrapper {
     display: flex;
+
     justify-content: center;
+
     align-items: flex-start;
 }
 
 #totwCanvas {
     display: block;
+
     width: 100%;
+
     max-width: 810px;
+
     height: auto;
+
     background: #202133;
+
     box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
 }
 
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
 @media (max-width: 950px) {
+
     .app {
         grid-template-columns: 1fr;
     }
+
 }
