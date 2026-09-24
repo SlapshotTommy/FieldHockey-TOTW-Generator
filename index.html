@@ -1,306 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Saintfield Hockey - Team of the Week</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f1f2f5;
-            color: #202133;
-        }
-
-        header {
-            background: #202133;
-            color: white;
-            padding: 24px;
-            text-align: center;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 30px;
-        }
-
-        header p {
-            margin: 7px 0 0;
-            color: #f2cf44;
-            font-weight: bold;
-        }
-
-        .app {
-            max-width: 1500px;
-            margin: 25px auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: 420px 1fr;
-            gap: 25px;
-        }
-
-        .panel {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 3px 12px rgba(0,0,0,.08);
-        }
-
-        h2 {
-            margin-top: 0;
-        }
-
-        .settings {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        label {
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 4px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .player {
-            border-top: 1px solid #ddd;
-            padding: 14px 0;
-        }
-
-        .player-title {
-            font-weight: bold;
-            color: #202133;
-            margin-bottom: 8px;
-        }
-
-        .player-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 8px;
-        }
-
-        .reason {
-            margin-top: 6px;
-        }
-
-        button {
-            width: 100%;
-            border: 0;
-            padding: 12px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            background: #202133;
-            color: white;
-            margin-top: 15px;
-        }
-
-        button:hover {
-            opacity: .9;
-        }
-
-        .preview {
-            min-height: 850px;
-            background: #202133;
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        canvas {
-            max-width: 100%;
-            background: white;
-        }
-
-        @media (max-width: 1000px) {
-            .app {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 
 <body>
 
-<header>
-    <h1>SAINTFIELD HOCKEY CLUB</h1>
-    <p>TEAM OF THE WEEK GENERATOR</p>
-</header>
+    <header>
+        <h1>SAINTFIELD HOCKEY CLUB</h1>
+        <h2>TEAM OF THE WEEK GENERATOR</h2>
+    </header>
 
-<div class="app">
+    <main class="app">
 
-    <div class="panel">
+        <!-- =========================
+             CONTROLS
+        ========================== -->
 
-        <h2>Team of the Week</h2>
+        <section class="controls">
 
-        <div class="settings">
-            <label>
-                Season
-                <input id="season" value="2026/27">
-            </label>
-
-            <label>
-                Weekend
-                <input id="weekend" value="Weekend 2">
-            </label>
-        </div>
-
-        <div id="players"></div>
-
-        <button onclick="generateGraphic()">
-            Generate TOTW
-        </button>
-
-    </div>
-
-    <div class="preview">
-        <canvas id="totwCanvas" width="1080" height="1350"></canvas>
-    </div>
-
-</div>
-
-<script>
-
-const positions = [
-    "Goalkeeper",
-    "Defender",
-    "Defender",
-    "Defender",
-    "Defender",
-    "Midfielder",
-    "Midfielder",
-    "Midfielder",
-    "Forward",
-    "Forward",
-    "Forward"
-];
-
-const samplePlayers = [
-    ["Goalkeeper One", "Mens 1s", "Clean Sheet | POTM"],
-    ["Defender One", "Ladies 1s", "POTM | 3-1 Win"],
-    ["Defender Two", "Mens 2s", "1 Goal | 4-2 Win"],
-    ["Defender Three", "Ladies 2s", "Clean Sheet | POTM"],
-    ["Defender Four", "Mens 3s", "2 Assists | 3-0 Win"],
-    ["Midfielder One", "Ladies 1s", "1 Goal | POTM"],
-    ["Tommy Brown", "Mens 2s", "2 Goals | POTM | 4-1 Win"],
-    ["Midfielder Three", "Ladies 3s", "2 Goals | 3-2 Win"],
-    ["Forward One", "Mens 1s", "Hat-trick | POTM"],
-    ["Forward Two", "Ladies 2s", "2 Goals | 4-0 Win"],
-    ["Forward Three", "Mens 3s", "1 Goal | POTM"]
-];
-
-function buildPlayerInputs() {
-
-    const container = document.getElementById("players");
-
-    positions.forEach((position, index) => {
-
-        const player = samplePlayers[index];
-
-        const div = document.createElement("div");
-        div.className = "player";
-
-        div.innerHTML = `
-            <div class="player-title">
-                ${index + 1}. ${position}
+            <div class="section-title">
+                Team Details
             </div>
 
-            <div class="player-row">
-                <input
-                    id="name-${index}"
-                    value="${player[0]}"
-                    placeholder="Player name">
+            <div class="team-details">
 
-                <input
-                    id="squad-${index}"
-                    value="${player[1]}"
-                    placeholder="Squad">
+                <label>
+                    Season
+                    <input
+                        id="season"
+                        type="text"
+                        value="2026/27">
+                </label>
+
+                <label>
+                    Weekend
+                    <input
+                        id="weekend"
+                        type="text"
+                        value="Weekend 3">
+                </label>
+
             </div>
 
-            <input
-                class="reason"
-                id="reason-${index}"
-                value="${player[2]}"
-                placeholder="Reasons separated with |">
-        `;
 
-        container.appendChild(div);
-    });
-}
+            <div class="section-title">
+                Starting XI
+            </div>
 
-function generateGraphic() {
+            <p class="hint">
+                Enter each player's name, squad and performance summary.
+                Separate individual reasons using |
+            </p>
 
-    const canvas = document.getElementById("totwCanvas");
-    const ctx = canvas.getContext("2d");
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+            <!-- Player inputs are generated by JavaScript -->
 
-    // Temporary background.
-    // The field-hockey pitch comes next.
-    ctx.fillStyle = "#202133";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+            <div id="players"></div>
 
-    ctx.textAlign = "center";
 
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 52px Arial";
-    ctx.fillText(
-        "SAINTFIELD HOCKEY CLUB",
-        canvas.width / 2,
-        80
-    );
+            <button
+                id="generateButton"
+                type="button">
+                Generate TOTW
+            </button>
 
-    ctx.fillStyle = "#f2cf44";
-    ctx.font = "bold 42px Arial";
-    ctx.fillText(
-        "TEAM OF THE WEEK",
-        canvas.width / 2,
-        135
-    );
+        </section>
 
-    const season =
-        document.getElementById("season").value;
 
-    const weekend =
-        document.getElementById("weekend").value;
+        <!-- =========================
+             PREVIEW
+        ========================== -->
 
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "24px Arial";
-    ctx.fillText(
-        `${season} • ${weekend}`,
-        canvas.width / 2,
-        180
-    );
+        <section class="preview">
 
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "28px Arial";
+            <div class="section-title">
+                Preview
+            </div>
 
-    ctx.fillText(
-        "TOTW pitch renderer coming next...",
-        canvas.width / 2,
-        canvas.height / 2
-    );
-}
+            <div class="canvas-wrapper">
 
-buildPlayerInputs();
-generateGraphic();
+                <canvas
+                    id="totwCanvas"
+                    width="1080"
+                    height="1350">
+                </canvas>
 
-</script>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="./js/totw.js"></script>
 
 </body>
+
 </html>
