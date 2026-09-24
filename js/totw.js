@@ -26,8 +26,18 @@ const samplePlayers = [
     ["Forward Three", "Mens 3s", "1 Goal | POTM"]
 ];
 
+
+// ====================================================
+// PITCH IMAGE
+// ====================================================
+
 const pitchImage = new Image();
-pitchImage.src = "./Pitch.png";
+pitchImage.src = "./assets/Pitch.png";
+
+
+// ====================================================
+// BUILD PLAYER INPUTS
+// ====================================================
 
 function buildPlayerInputs() {
 
@@ -69,29 +79,21 @@ function buildPlayerInputs() {
 }
 
 
-// ----------------------------------------------------
-// Rounded rectangle helper
-// ----------------------------------------------------
+// ====================================================
+// ROUNDED RECTANGLE
+// ====================================================
 
 function roundedRect(ctx, x, y, width, height, radius) {
 
     ctx.beginPath();
-
-    ctx.roundRect(
-        x,
-        y,
-        width,
-        height,
-        radius
-    );
-
+    ctx.roundRect(x, y, width, height, radius);
     ctx.fill();
 }
 
 
-// ----------------------------------------------------
-// Draw an individual player
-// ----------------------------------------------------
+// ====================================================
+// DRAW PLAYER
+// ====================================================
 
 function drawPlayer(ctx, x, y, index) {
 
@@ -110,12 +112,12 @@ function drawPlayer(ctx, x, y, index) {
         .filter(Boolean);
 
 
-    // -------------------------
-    // Player marker
-    // -------------------------
+    // ------------------------------------------------
+    // PLAYER MARKER
+    // ------------------------------------------------
 
     ctx.beginPath();
-    ctx.arc(x, y, 30, 0, Math.PI * 2);
+    ctx.arc(x, y, 29, 0, Math.PI * 2);
 
     ctx.fillStyle = "#202133";
     ctx.fill();
@@ -125,46 +127,39 @@ function drawPlayer(ctx, x, y, index) {
     ctx.stroke();
 
 
-    // -------------------------
-    // Position number
-    // -------------------------
+    // Position / player number
 
-    ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    ctx.font = "bold 22px Arial";
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 21px Arial";
 
-    ctx.fillText(
-        index + 1,
-        x,
-        y + 1
+    ctx.fillText(index + 1, x, y + 1);
+
+
+    // ------------------------------------------------
+    // NAME
+    // ------------------------------------------------
+
+    const nameY = y + 47;
+
+    ctx.font = "bold 20px Arial";
+
+    const nameWidth = Math.max(
+        145,
+        ctx.measureText(name.toUpperCase()).width + 24
     );
 
-
-    // -------------------------
-    // Player name
-    // -------------------------
-
-    const nameY = y + 48;
-
-    ctx.font = "bold 22px Arial";
-
-    const nameWidth =
-        Math.max(
-            150,
-            ctx.measureText(name).width + 28
-        );
-
-    ctx.fillStyle = "rgba(32,33,51,0.95)";
+    ctx.fillStyle = "rgba(32, 33, 51, 0.96)";
 
     roundedRect(
         ctx,
         x - nameWidth / 2,
-        nameY - 18,
+        nameY - 17,
         nameWidth,
-        36,
-        9
+        34,
+        8
     );
 
     ctx.fillStyle = "#ffffff";
@@ -176,28 +171,27 @@ function drawPlayer(ctx, x, y, index) {
     );
 
 
-    // -------------------------
-    // Squad
-    // -------------------------
+    // ------------------------------------------------
+    // SQUAD
+    // ------------------------------------------------
 
-    const squadY = nameY + 32;
+    const squadY = nameY + 30;
 
-    ctx.font = "bold 17px Arial";
+    ctx.font = "bold 16px Arial";
 
-    const squadWidth =
-        Math.max(
-            90,
-            ctx.measureText(squad).width + 24
-        );
+    const squadWidth = Math.max(
+        88,
+        ctx.measureText(squad).width + 22
+    );
 
     ctx.fillStyle = "#f2cf44";
 
     roundedRect(
         ctx,
         x - squadWidth / 2,
-        squadY - 14,
+        squadY - 13,
         squadWidth,
-        28,
+        26,
         7
     );
 
@@ -210,31 +204,29 @@ function drawPlayer(ctx, x, y, index) {
     );
 
 
-    // -------------------------
-    // Performance reasons
-    // -------------------------
+    // ------------------------------------------------
+    // PERFORMANCE REASONS
+    // ------------------------------------------------
 
-    let reasonY = squadY + 30;
+    let reasonY = squadY + 29;
 
-    ctx.font = "bold 16px Arial";
+    ctx.font = "bold 15px Arial";
 
     reasons.forEach(reason => {
 
-        const reasonWidth =
-            Math.max(
-                105,
-                ctx.measureText(reason).width + 22
-            );
+        const reasonWidth = Math.max(
+            100,
+            ctx.measureText(reason).width + 20
+        );
 
-        ctx.fillStyle =
-            "rgba(32,33,51,0.90)";
+        ctx.fillStyle = "rgba(32, 33, 51, 0.92)";
 
         roundedRect(
             ctx,
             x - reasonWidth / 2,
-            reasonY - 13,
+            reasonY - 12,
             reasonWidth,
-            26,
+            24,
             6
         );
 
@@ -246,14 +238,14 @@ function drawPlayer(ctx, x, y, index) {
             reasonY
         );
 
-        reasonY += 28;
+        reasonY += 26;
     });
 }
 
 
-// ----------------------------------------------------
-// Main graphic generator
-// ----------------------------------------------------
+// ====================================================
+// DRAW GRAPHIC
+// ====================================================
 
 function generateGraphic() {
 
@@ -262,6 +254,9 @@ function generateGraphic() {
 
     const ctx =
         canvas.getContext("2d");
+
+
+    // Clear canvas
 
     ctx.clearRect(
         0,
@@ -272,7 +267,7 @@ function generateGraphic() {
 
 
     // ------------------------------------------------
-    // Main navy background
+    // NAVY BACKGROUND
     // ------------------------------------------------
 
     ctx.fillStyle = "#202133";
@@ -286,14 +281,13 @@ function generateGraphic() {
 
 
     // ------------------------------------------------
-    // Header
+    // HEADER
     // ------------------------------------------------
 
     ctx.textAlign = "center";
     ctx.textBaseline = "alphabetic";
 
     ctx.fillStyle = "#ffffff";
-
     ctx.font = "bold 52px Arial";
 
     ctx.fillText(
@@ -304,7 +298,6 @@ function generateGraphic() {
 
 
     ctx.fillStyle = "#f2cf44";
-
     ctx.font = "bold 42px Arial";
 
     ctx.fillText(
@@ -322,7 +315,6 @@ function generateGraphic() {
 
 
     ctx.fillStyle = "#ffffff";
-
     ctx.font = "23px Arial";
 
     ctx.fillText(
@@ -333,14 +325,16 @@ function generateGraphic() {
 
 
     // ------------------------------------------------
-    // Pitch
+    // WAIT FOR PITCH IMAGE
     // ------------------------------------------------
 
-    if (!pitchImage.complete ||
-        pitchImage.naturalWidth === 0) {
+    if (
+        !pitchImage.complete ||
+        pitchImage.naturalWidth === 0
+    ) {
 
-        ctx.font = "24px Arial";
         ctx.fillStyle = "#ffffff";
+        ctx.font = "24px Arial";
 
         ctx.fillText(
             "Loading pitch...",
@@ -352,10 +346,9 @@ function generateGraphic() {
     }
 
 
-    /*
-        Available area for the pitch.
-        We calculate the image size rather than stretching it.
-    */
+    // ------------------------------------------------
+    // FIT PITCH INTO AVAILABLE SPACE
+    // ------------------------------------------------
 
     const areaX = 25;
     const areaY = 185;
@@ -383,16 +376,12 @@ function generateGraphic() {
     if (imageRatio > areaRatio) {
 
         drawWidth = areaWidth;
-
-        drawHeight =
-            drawWidth / imageRatio;
+        drawHeight = drawWidth / imageRatio;
 
     } else {
 
         drawHeight = areaHeight;
-
-        drawWidth =
-            drawHeight * imageRatio;
+        drawWidth = drawHeight * imageRatio;
     }
 
 
@@ -401,7 +390,7 @@ function generateGraphic() {
 
     const pitchY =
         areaY +
-        (areaHeight - drawHeight) / 2;
+        ((areaHeight - drawHeight) / 2);
 
 
     ctx.drawImage(
@@ -413,33 +402,33 @@ function generateGraphic() {
     );
 
 
-    // ------------------------------------------------
-    // Player formation
+    // =================================================
+    // FIXED 1-4-3-3 FORMATION
     //
-    // Values are percentages of the displayed image.
-    // This makes the formation move with the pitch.
-    // ------------------------------------------------
+    // X/Y are percentages of the pitch image.
+    // Team attacks towards the TOP.
+    // =================================================
 
     const formation = [
 
-        // Goalkeeper
+        // GK
         [0.50, 0.82],
 
-        // Defenders
-        [0.20, 0.66],
-        [0.40, 0.66],
-        [0.60, 0.66],
-        [0.80, 0.66],
+        // DEF
+        [0.18, 0.64],
+        [0.39, 0.64],
+        [0.61, 0.64],
+        [0.82, 0.64],
 
-        // Midfield
-        [0.27, 0.44],
-        [0.50, 0.44],
-        [0.73, 0.44],
+        // MID
+        [0.27, 0.41],
+        [0.50, 0.41],
+        [0.73, 0.41],
 
-        // Forwards
-        [0.27, 0.20],
-        [0.50, 0.20],
-        [0.73, 0.20]
+        // FWD
+        [0.27, 0.17],
+        [0.50, 0.17],
+        [0.73, 0.17]
     ];
 
 
@@ -465,9 +454,21 @@ function generateGraphic() {
 }
 
 
-// ----------------------------------------------------
-// Start
-// ----------------------------------------------------
+// ====================================================
+// BUTTON
+// ====================================================
+
+document
+    .getElementById("generateButton")
+    .addEventListener(
+        "click",
+        generateGraphic
+    );
+
+
+// ====================================================
+// INITIALISE
+// ====================================================
 
 buildPlayerInputs();
 
