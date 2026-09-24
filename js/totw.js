@@ -33,7 +33,7 @@ const positions = [
 const positionLabels = [
     "GK",
     "LB",
-    "SWEEP",
+    "S",
     "CB",
     "RB",
     "LM",
