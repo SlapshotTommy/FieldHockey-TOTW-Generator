@@ -25,9 +25,6 @@ const positions = [
 
 // ====================================================
 // POSITION LABELS
-//
-// These are displayed inside the player circles.
-// Order must match the positions/player arrays.
 // ====================================================
 
 const positionLabels = [
@@ -43,6 +40,28 @@ const positionLabels = [
     "CF",
     "RW"
 ];
+
+
+// ====================================================
+// POWER QUERY POSITION MAPPING
+//
+// Maps TOTW Position from Excel to the correct
+// slot in the website.
+// ====================================================
+
+const importPositionMap = {
+    "goalie": 0,
+    "defence 1": 1,
+    "defence 2": 2,
+    "defence 3": 3,
+    "defence 4": 4,
+    "midfield 1": 5,
+    "midfield 2": 6,
+    "midfield 3": 7,
+    "forward 1": 8,
+    "forward 2": 9,
+    "forward 3": 10
+};
 
 
 // ====================================================
@@ -74,6 +93,25 @@ pitchImage.src = "./assets/Pitch.png";
 
 
 // ====================================================
+// SWAP STATE
+// ====================================================
+
+let selectedSwapIndex = null;
+
+
+// ====================================================
+// CLEAN IMPORTED TEXT
+// ====================================================
+
+function cleanText(value) {
+
+    return String(value || "")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+
+// ====================================================
 // BUILD PLAYER INPUTS
 // ====================================================
 
@@ -93,6 +131,7 @@ function buildPlayerInputs() {
             document.createElement("div");
 
         div.className = "player";
+        div.id = `player-${index}`;
 
 
         div.innerHTML = `
@@ -121,11 +160,502 @@ function buildPlayerInputs() {
                 value="${player[2]}"
                 placeholder="Reasons separated with |">
 
+            <div class="player-actions">
+
+                <button
+                    class="swap-button"
+                    type="button"
+                    data-index="${index}">
+
+                    Swap ${positionLabels[index]}
+
+                </button>
+
+            </div>
+
         `;
 
 
         container.appendChild(div);
     });
+
+
+    // Attach swap events after all players exist.
+
+    document
+        .querySelectorAll(".swap-button")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const index =
+                        Number(button.dataset.index);
+
+                    handleSwap(index);
+                }
+            );
+        });
+}
+
+
+// ====================================================
+// SWAP PLAYERS
+// ====================================================
+
+function handleSwap(index) {
+
+    // No player selected yet:
+    // select the first player.
+
+    if (selectedSwapIndex === null) {
+
+        selectedSwapIndex = index;
+
+
+        document
+            .getElementById(`player-${index}`)
+            .classList
+            .add("swap-selected");
+
+
+        setImportStatus(
+            `Selected ${positionLabels[index]}. Choose another player to swap with.`,
+            "success"
+        );
+
+
+        return;
+    }
+
+
+    // Clicking the same player again cancels the swap.
+
+    if (selectedSwapIndex === index) {
+
+        document
+            .getElementById(`player-${index}`)
+            .classList
+            .remove("swap-selected");
+
+
+        selectedSwapIndex = null;
+
+
+        setImportStatus(
+            "Swap cancelled.",
+            ""
+        );
+
+
+        return;
+    }
+
+
+    const firstIndex =
+        selectedSwapIndex;
+
+
+    const secondIndex =
+        index;
+
+
+    // ------------------------------------------------
+    // READ FIRST PLAYER
+    // ------------------------------------------------
+
+    const firstPlayer = {
+        name:
+            document
+                .getElementById(`name-${firstIndex}`)
+                .value,
+
+        squad:
+            document
+                .getElementById(`squad-${firstIndex}`)
+                .value,
+
+        reason:
+            document
+                .getElementById(`reason-${firstIndex}`)
+                .value
+    };
+
+
+    // ------------------------------------------------
+    // READ SECOND PLAYER
+    // ------------------------------------------------
+
+    const secondPlayer = {
+        name:
+            document
+                .getElementById(`name-${secondIndex}`)
+                .value,
+
+        squad:
+            document
+                .getElementById(`squad-${secondIndex}`)
+                .value,
+
+        reason:
+            document
+                .getElementById(`reason-${secondIndex}`)
+                .value
+    };
+
+
+    // ------------------------------------------------
+    // SWAP PLAYER DATA
+    // ------------------------------------------------
+
+    document
+        .getElementById(`name-${firstIndex}`)
+        .value = secondPlayer.name;
+
+
+    document
+        .getElementById(`squad-${firstIndex}`)
+        .value = secondPlayer.squad;
+
+
+    document
+        .getElementById(`reason-${firstIndex}`)
+        .value = secondPlayer.reason;
+
+
+    document
+        .getElementById(`name-${secondIndex}`)
+        .value = firstPlayer.name;
+
+
+    document
+        .getElementById(`squad-${secondIndex}`)
+        .value = firstPlayer.squad;
+
+
+    document
+        .getElementById(`reason-${secondIndex}`)
+        .value = firstPlayer.reason;
+
+
+    // ------------------------------------------------
+    // CLEAR SELECTION
+    // ------------------------------------------------
+
+    document
+        .getElementById(`player-${firstIndex}`)
+        .classList
+        .remove("swap-selected");
+
+
+    selectedSwapIndex = null;
+
+
+    // Regenerate graphic immediately.
+
+    generateGraphic();
+
+
+    setImportStatus(
+        `${positionLabels[firstIndex]} and ${positionLabels[secondIndex]} swapped.`,
+        "success"
+    );
+}
+
+
+// ====================================================
+// IMPORT STATUS
+// ====================================================
+
+function setImportStatus(message, type) {
+
+    const status =
+        document.getElementById("importStatus");
+
+
+    status.textContent =
+        message;
+
+
+    status.className =
+        "import-status";
+
+
+    if (type) {
+
+        status.classList.add(type);
+    }
+}
+
+
+// ====================================================
+// IMPORT FROM EXCEL
+// ====================================================
+
+function importFromExcel() {
+
+    const importBox =
+        document.getElementById("excelImport");
+
+
+    const rawText =
+        importBox.value.trim();
+
+
+    if (!rawText) {
+
+        setImportStatus(
+            "Paste the Excel TOTW table first.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    // Excel copies columns separated by TAB
+    // and rows separated by line breaks.
+
+    let rows =
+        rawText
+            .split(/\r?\n/)
+            .filter(row => row.trim() !== "")
+            .map(row => row.split("\t"));
+
+
+    if (rows.length === 0) {
+
+        setImportStatus(
+            "No rows were found in the pasted data.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // DETECT HEADER ROW
+    // =================================================
+
+    const firstRow =
+        rows[0]
+            .map(value =>
+                cleanText(value).toLowerCase()
+            );
+
+
+    const hasHeader =
+        firstRow.includes("season") &&
+        firstRow.includes("weekend") &&
+        firstRow.includes("totw position") &&
+        firstRow.includes("player") &&
+        firstRow.includes("squad") &&
+        firstRow.includes("reason");
+
+
+    if (hasHeader) {
+
+        rows =
+            rows.slice(1);
+    }
+
+
+    // =================================================
+    // VALIDATE ROW COUNT
+    // =================================================
+
+    if (rows.length !== 11) {
+
+        setImportStatus(
+            `Expected 11 player rows but found ${rows.length}.`,
+            "error"
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // PROCESS IMPORT
+    // =================================================
+
+    const importedSlots =
+        new Set();
+
+
+    let importedSeason = "";
+    let importedWeekend = "";
+
+
+    for (const row of rows) {
+
+        if (row.length < 6) {
+
+            setImportStatus(
+                "One or more Excel rows does not contain all 6 columns.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const season =
+            cleanText(row[0]);
+
+
+        const weekend =
+            cleanText(row[1]);
+
+
+        const totwPosition =
+            cleanText(row[2]);
+
+
+        const player =
+            cleanText(row[3]);
+
+
+        const squad =
+            cleanText(row[4]);
+
+
+        const reason =
+            cleanText(row.slice(5).join("\t"));
+
+
+        const positionKey =
+            totwPosition.toLowerCase();
+
+
+        // Check position exists.
+
+        if (
+            !Object.prototype.hasOwnProperty.call(
+                importPositionMap,
+                positionKey
+            )
+        ) {
+
+            setImportStatus(
+                `Unknown TOTW Position: ${totwPosition}`,
+                "error"
+            );
+
+            return;
+        }
+
+
+        const index =
+            importPositionMap[positionKey];
+
+
+        // Prevent duplicated slots.
+
+        if (importedSlots.has(index)) {
+
+            setImportStatus(
+                `Duplicate TOTW Position: ${totwPosition}`,
+                "error"
+            );
+
+            return;
+        }
+
+
+        importedSlots.add(index);
+
+
+        // Capture season/weekend from first row.
+
+        if (!importedSeason) {
+
+            importedSeason =
+                season;
+        }
+
+
+        if (!importedWeekend) {
+
+            importedWeekend =
+                weekend;
+        }
+
+
+        // Populate player.
+
+        document
+            .getElementById(`name-${index}`)
+            .value = player;
+
+
+        document
+            .getElementById(`squad-${index}`)
+            .value = squad;
+
+
+        document
+            .getElementById(`reason-${index}`)
+            .value = reason;
+    }
+
+
+    // =================================================
+    // FINAL VALIDATION
+    // =================================================
+
+    if (importedSlots.size !== 11) {
+
+        setImportStatus(
+            `Only ${importedSlots.size} unique positions were imported.`,
+            "error"
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // UPDATE TEAM DETAILS
+    // =================================================
+
+    document
+        .getElementById("season")
+        .value = importedSeason;
+
+
+    document
+        .getElementById("weekend")
+        .value = importedWeekend;
+
+
+    // Clear any unfinished swap selection.
+
+    if (selectedSwapIndex !== null) {
+
+        document
+            .getElementById(
+                `player-${selectedSwapIndex}`
+            )
+            .classList
+            .remove("swap-selected");
+
+
+        selectedSwapIndex = null;
+    }
+
+
+    // Regenerate immediately.
+
+    generateGraphic();
+
+
+    setImportStatus(
+        "11 players imported successfully.",
+        "success"
+    );
 }
 
 
@@ -167,10 +697,6 @@ function drawPlayer(
     index
 ) {
 
-    // ------------------------------------------------
-    // READ PLAYER DATA
-    // ------------------------------------------------
-
     const name =
         document
             .getElementById(`name-${index}`)
@@ -184,12 +710,6 @@ function drawPlayer(
             .value
             .trim();
 
-
-    // Split:
-    //
-    // 2 Goals | POTM | 4-1 Win
-    //
-    // into individual performance bubbles.
 
     const reasons =
         reasonText
@@ -213,16 +733,18 @@ function drawPlayer(
     );
 
 
-    // Navy centre
+    ctx.fillStyle =
+        "#202133";
 
-    ctx.fillStyle = "#202133";
     ctx.fill();
 
 
-    // White ring
+    ctx.lineWidth =
+        5;
 
-    ctx.lineWidth = 5;
-    ctx.strokeStyle = "#ffffff";
+    ctx.strokeStyle =
+        "#ffffff";
+
     ctx.stroke();
 
 
@@ -230,14 +752,15 @@ function drawPlayer(
     // POSITION LABEL
     // =================================================
 
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.textAlign =
+        "center";
 
-    ctx.fillStyle = "#ffffff";
+    ctx.textBaseline =
+        "middle";
 
+    ctx.fillStyle =
+        "#ffffff";
 
-    // SWEEP support remains here in case we
-    // decide to use that label again later.
 
     if (positionLabels[index] === "SWEEP") {
 
@@ -279,8 +802,6 @@ function drawPlayer(
         );
 
 
-    // Name background
-
     ctx.fillStyle =
         "rgba(32, 33, 51, 0.96)";
 
@@ -294,8 +815,6 @@ function drawPlayer(
         7
     );
 
-
-    // Name text
 
     ctx.fillStyle =
         "#ffffff";
@@ -329,8 +848,6 @@ function drawPlayer(
             );
 
 
-        // Reason bubble
-
         ctx.fillStyle =
             "rgba(32, 33, 51, 0.92)";
 
@@ -345,8 +862,6 @@ function drawPlayer(
         );
 
 
-        // Reason text
-
         ctx.fillStyle =
             "#ffffff";
 
@@ -357,8 +872,6 @@ function drawPlayer(
             reasonY
         );
 
-
-        // Move down for next reason
 
         reasonY += 26;
     });
@@ -380,10 +893,6 @@ function generateGraphic() {
     const ctx =
         canvas.getContext("2d");
 
-
-    // =================================================
-    // CLEAR CANVAS
-    // =================================================
 
     ctx.clearRect(
         0,
@@ -420,8 +929,6 @@ function generateGraphic() {
         "alphabetic";
 
 
-    // Club name
-
     ctx.fillStyle =
         "#ffffff";
 
@@ -436,8 +943,6 @@ function generateGraphic() {
         65
     );
 
-
-    // Team of the Week
 
     ctx.fillStyle =
         "#f2cf44";
@@ -517,7 +1022,8 @@ function generateGraphic() {
     // AVAILABLE PITCH AREA
     // =================================================
 
-    const areaY = 185;
+    const areaY =
+        185;
 
 
     const areaWidth =
@@ -604,67 +1110,26 @@ function generateGraphic() {
 
     // =================================================
     // 1-4-3-3 FORMATION
-    //
-    // Team attacks towards the TOP goal.
-    //
-    // GK
-    //
-    // LB       CB       CB       RB
-    //
-    // LM       CM       RM
-    //
-    // LW       CF       RW
-    //
     // =================================================
 
     const formation = [
 
-        // =============================================
-        // GOALKEEPER
-        // =============================================
-
         [0.50, 0.82],     // GK
 
-
-        // =============================================
-        // DEFENDERS
-        // =============================================
-
         [0.23, 0.61],     // LB
-
         [0.39, 0.69],     // CB
-
         [0.61, 0.69],     // CB
-
         [0.77, 0.61],     // RB
 
-
-        // =============================================
-        // MIDFIELDERS
-        // =============================================
-
         [0.27, 0.41],     // LM
-
         [0.50, 0.41],     // CM
-
         [0.73, 0.41],     // RM
 
-
-        // =============================================
-        // FORWARDS
-        // =============================================
-
         [0.27, 0.21],     // LW
-
         [0.50, 0.17],     // CF
-
         [0.73, 0.21]      // RW
     ];
 
-
-    // =================================================
-    // DRAW ALL PLAYERS
-    // =================================================
 
     formation.forEach(
         ([relativeX, relativeY], index) => {
@@ -697,27 +1162,10 @@ function generateGraphic() {
 
 
 // ====================================================
-// GENERATE BUTTON
-// ====================================================
-
-document
-    .getElementById(
-        "generateButton"
-    )
-    .addEventListener(
-        "click",
-        generateGraphic
-    );
-
-
-// ====================================================
 // DOWNLOAD PNG
 // ====================================================
 
 function downloadGraphic() {
-
-    // Regenerate first so the downloaded image always
-    // contains the latest values entered in the form.
 
     generateGraphic();
 
@@ -727,10 +1175,6 @@ function downloadGraphic() {
             "totwCanvas"
         );
 
-
-    // ------------------------------------------------
-    // BUILD FILE NAME
-    // ------------------------------------------------
 
     const season =
         document
@@ -745,6 +1189,7 @@ function downloadGraphic() {
             .getElementById("weekend")
             .value
             .trim()
+            .replace(/\//g, "-")
             .replace(/\s+/g, "-");
 
 
@@ -752,19 +1197,11 @@ function downloadGraphic() {
         `Saintfield-TOTW-${season}-${weekend}.png`;
 
 
-    // ------------------------------------------------
-    // CREATE PNG
-    // ------------------------------------------------
-
     const image =
         canvas.toDataURL(
             "image/png"
         );
 
-
-    // ------------------------------------------------
-    // DOWNLOAD PNG
-    // ------------------------------------------------
 
     const link =
         document.createElement("a");
@@ -793,16 +1230,30 @@ function downloadGraphic() {
 
 
 // ====================================================
-// DOWNLOAD BUTTON
+// BUTTON EVENTS
 // ====================================================
 
 document
-    .getElementById(
-        "downloadButton"
-    )
+    .getElementById("generateButton")
+    .addEventListener(
+        "click",
+        generateGraphic
+    );
+
+
+document
+    .getElementById("downloadButton")
     .addEventListener(
         "click",
         downloadGraphic
+    );
+
+
+document
+    .getElementById("importButton")
+    .addEventListener(
+        "click",
+        importFromExcel
     );
 
 
@@ -813,8 +1264,6 @@ document
 buildPlayerInputs();
 
 
-// Generate once pitch has loaded
-
 pitchImage.onload = () => {
 
     generateGraphic();
@@ -822,11 +1271,7 @@ pitchImage.onload = () => {
 };
 
 
-// If browser already cached the pitch,
-// generate immediately.
-
 if (pitchImage.complete) {
 
     generateGraphic();
-
 }
