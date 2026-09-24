@@ -1,31 +1,30 @@
-// ====================================================
-// SAINTFIELD HOCKEY CLUB
-// TEAM OF THE WEEK GENERATOR
-// ====================================================
+/* =========================================================
+   SAINTFIELD HOCKEY CLUB
+   TEAM OF THE WEEK GENERATOR
+   ========================================================= */
 
 
-// ====================================================
-// POSITIONS
-// ====================================================
+/* =========================================================
+   FORMATION
+   ========================================================= */
 
 const positions = [
-    "Goalkeeper",
-    "Defender",
-    "Defender",
-    "Defender",
-    "Defender",
-    "Midfielder",
-    "Midfielder",
-    "Midfielder",
-    "Forward",
-    "Forward",
-    "Forward"
+    [0.50, 0.82], // GK
+
+    [0.23, 0.61], // LB
+    [0.39, 0.69], // CB
+    [0.61, 0.69], // CB
+    [0.77, 0.61], // RB
+
+    [0.27, 0.41], // LM
+    [0.50, 0.41], // CM
+    [0.73, 0.41], // RM
+
+    [0.27, 0.21], // LW
+    [0.50, 0.17], // CF
+    [0.73, 0.21]  // RW
 ];
 
-
-// ====================================================
-// POSITION LABELS
-// ====================================================
 
 const positionLabels = [
     "GK",
@@ -42,123 +41,182 @@ const positionLabels = [
 ];
 
 
-// ====================================================
-// POWER QUERY POSITION MAPPING
-//
-// Maps TOTW Position from Excel to the correct
-// slot in the website.
-// ====================================================
+/* =========================================================
+   EXCEL POSITION MAPPING
+   ========================================================= */
 
 const importPositionMap = {
     "goalie": 0,
+
     "defence 1": 1,
     "defence 2": 2,
     "defence 3": 3,
     "defence 4": 4,
+
     "midfield 1": 5,
     "midfield 2": 6,
     "midfield 3": 7,
+
     "forward 1": 8,
     "forward 2": 9,
     "forward 3": 10
 };
 
 
-// ====================================================
-// SAMPLE DATA
-// ====================================================
+/* =========================================================
+   SAMPLE DATA
+   ========================================================= */
 
 const samplePlayers = [
-    ["Goalkeeper One", "Mens 1s", "Clean Sheet | POTM"],
-    ["Defender One", "Ladies 1s", "POTM | 3-1 Win"],
-    ["Defender Two", "Mens 2s", "1 Goal | 4-2 Win"],
-    ["Defender Three", "Ladies 2s", "Clean Sheet | POTM"],
-    ["Defender Four", "Mens 3s", "2 Goals | 3-0 Win"],
-    ["Midfielder One", "Ladies 1s", "1 Goal | POTM"],
-    ["Tommy Brown", "Mens 2s", "2 Goals | POTM | 4-1 Win"],
-    ["Midfielder Three", "Ladies 3s", "2 Goals | 3-2 Win"],
-    ["Forward One", "Mens 1s", "Hat-trick | POTM"],
-    ["Forward Two", "Ladies 2s", "2 Goals | 4-0 Win"],
-    ["Forward Three", "Mens 3s", "1 Goal | POTM"]
+
+    {
+        name: "Goalkeeper",
+        squad: "Ladies 1s",
+        reason: "Clean Sheet"
+    },
+
+    {
+        name: "Left Back",
+        squad: "Ladies 1s",
+        reason: "Strong Defensive Display"
+    },
+
+    {
+        name: "Centre Back",
+        squad: "Ladies 1s",
+        reason: "Clean Sheet"
+    },
+
+    {
+        name: "Centre Back",
+        squad: "Ladies 1s",
+        reason: "POTG"
+    },
+
+    {
+        name: "Right Back",
+        squad: "Ladies 1s",
+        reason: "Strong Defensive Display"
+    },
+
+    {
+        name: "Left Midfield",
+        squad: "Ladies 1s",
+        reason: "Goal"
+    },
+
+    {
+        name: "Centre Midfield",
+        squad: "Mens 1s",
+        reason: "POTG"
+    },
+
+    {
+        name: "Right Midfield",
+        squad: "Ladies 2s",
+        reason: "Goal"
+    },
+
+    {
+        name: "Left Wing",
+        squad: "Ladies 1s",
+        reason: "Goal"
+    },
+
+    {
+        name: "Centre Forward",
+        squad: "Mens 1s",
+        reason: "2 Goals"
+    },
+
+    {
+        name: "Right Wing",
+        squad: "Ladies 1s",
+        reason: "Goal"
+    }
+
 ];
 
 
-// ====================================================
-// PITCH IMAGE
-// ====================================================
+/* =========================================================
+   GLOBALS
+   ========================================================= */
+
+const canvas = document.getElementById("totwCanvas");
+
+const ctx = canvas.getContext("2d");
 
 const pitchImage = new Image();
 
 pitchImage.src = "./assets/Pitch.png";
 
 
-// ====================================================
-// SWAP STATE
-// ====================================================
-
 let selectedSwapIndex = null;
 
 
-// ====================================================
-// CLEAN IMPORTED TEXT
-// ====================================================
+/* =========================================================
+   CLEAN IMPORTED TEXT
+   ========================================================= */
 
 function cleanText(value) {
 
-    return String(value || "")
-        .replace(/\s+/g, " ")
-        .trim();
+    return String(value ?? "")
+        .trim()
+        .replace(/\s+/g, " ");
+
 }
 
 
-// ====================================================
-// BUILD PLAYER INPUTS
-// ====================================================
+/* =========================================================
+   BUILD PLAYER INPUTS
+   ========================================================= */
 
 function buildPlayerInputs() {
 
-    const container =
-        document.getElementById("players");
+    const container = document.getElementById("players");
+
+    container.innerHTML = "";
 
 
-    positions.forEach((position, index) => {
+    samplePlayers.forEach((player, index) => {
 
-        const player =
-            samplePlayers[index];
+        const wrapper = document.createElement("div");
 
+        wrapper.className = "player";
 
-        const div =
-            document.createElement("div");
-
-        div.className = "player";
-        div.id = `player-${index}`;
+        wrapper.dataset.index = index;
 
 
-        div.innerHTML = `
+        wrapper.innerHTML = `
 
             <div class="player-title">
-                ${positionLabels[index]} - ${position}
+                ${positionLabels[index]}
             </div>
 
             <div class="player-row">
 
                 <input
-                    id="name-${index}"
-                    value="${player[0]}"
-                    placeholder="Player name">
+                    class="player-name"
+                    type="text"
+                    value="${player.name}"
+                    placeholder="Player name"
+                >
 
                 <input
-                    id="squad-${index}"
-                    value="${player[1]}"
-                    placeholder="Squad">
+                    class="player-squad"
+                    type="text"
+                    value="${player.squad}"
+                    placeholder="Squad"
+                >
 
             </div>
 
             <input
-                class="reason"
-                id="reason-${index}"
-                value="${player[2]}"
-                placeholder="Reasons separated with |">
+                class="player-reason reason"
+                type="text"
+                value="${player.reason}"
+                placeholder="Reason"
+            >
 
             <div class="player-actions">
 
@@ -166,9 +224,7 @@ function buildPlayerInputs() {
                     class="swap-button"
                     type="button"
                     data-index="${index}">
-
                     Swap ${positionLabels[index]}
-
                 </button>
 
             </div>
@@ -176,222 +232,133 @@ function buildPlayerInputs() {
         `;
 
 
-        container.appendChild(div);
+        container.appendChild(wrapper);
+
     });
 
-
-    // Attach swap events after all players exist.
 
     document
         .querySelectorAll(".swap-button")
         .forEach(button => {
 
-            button.addEventListener(
-                "click",
-                () => {
+            button.addEventListener("click", () => {
 
-                    const index =
-                        Number(button.dataset.index);
+                const index = Number(button.dataset.index);
 
-                    handleSwap(index);
-                }
-            );
+                handleSwap(index);
+
+            });
+
         });
+
 }
 
 
-// ====================================================
-// SWAP PLAYERS
-// ====================================================
+/* =========================================================
+   PLAYER SWAPPING
+   ========================================================= */
 
 function handleSwap(index) {
 
-    // No player selected yet:
-    // select the first player.
+    const playerCards = document.querySelectorAll(".player");
+
 
     if (selectedSwapIndex === null) {
 
         selectedSwapIndex = index;
 
-
-        document
-            .getElementById(`player-${index}`)
-            .classList
-            .add("swap-selected");
-
-
-        setImportStatus(
-            `Selected ${positionLabels[index]}. Choose another player to swap with.`,
-            "success"
-        );
-
+        playerCards[index].classList.add("swap-selected");
 
         return;
+
     }
 
-
-    // Clicking the same player again cancels the swap.
 
     if (selectedSwapIndex === index) {
 
-        document
-            .getElementById(`player-${index}`)
-            .classList
-            .remove("swap-selected");
-
+        playerCards[index].classList.remove("swap-selected");
 
         selectedSwapIndex = null;
 
-
-        setImportStatus(
-            "Swap cancelled.",
-            ""
-        );
-
-
         return;
+
     }
 
 
-    const firstIndex =
-        selectedSwapIndex;
+    const first = playerCards[selectedSwapIndex];
+
+    const second = playerCards[index];
 
 
-    const secondIndex =
-        index;
+    const firstName =
+        first.querySelector(".player-name").value;
+
+    const firstSquad =
+        first.querySelector(".player-squad").value;
+
+    const firstReason =
+        first.querySelector(".player-reason").value;
 
 
-    // ------------------------------------------------
-    // READ FIRST PLAYER
-    // ------------------------------------------------
+    first.querySelector(".player-name").value =
+        second.querySelector(".player-name").value;
 
-    const firstPlayer = {
-        name:
-            document
-                .getElementById(`name-${firstIndex}`)
-                .value,
+    first.querySelector(".player-squad").value =
+        second.querySelector(".player-squad").value;
 
-        squad:
-            document
-                .getElementById(`squad-${firstIndex}`)
-                .value,
-
-        reason:
-            document
-                .getElementById(`reason-${firstIndex}`)
-                .value
-    };
+    first.querySelector(".player-reason").value =
+        second.querySelector(".player-reason").value;
 
 
-    // ------------------------------------------------
-    // READ SECOND PLAYER
-    // ------------------------------------------------
+    second.querySelector(".player-name").value =
+        firstName;
 
-    const secondPlayer = {
-        name:
-            document
-                .getElementById(`name-${secondIndex}`)
-                .value,
+    second.querySelector(".player-squad").value =
+        firstSquad;
 
-        squad:
-            document
-                .getElementById(`squad-${secondIndex}`)
-                .value,
-
-        reason:
-            document
-                .getElementById(`reason-${secondIndex}`)
-                .value
-    };
+    second.querySelector(".player-reason").value =
+        firstReason;
 
 
-    // ------------------------------------------------
-    // SWAP PLAYER DATA
-    // ------------------------------------------------
-
-    document
-        .getElementById(`name-${firstIndex}`)
-        .value = secondPlayer.name;
-
-
-    document
-        .getElementById(`squad-${firstIndex}`)
-        .value = secondPlayer.squad;
-
-
-    document
-        .getElementById(`reason-${firstIndex}`)
-        .value = secondPlayer.reason;
-
-
-    document
-        .getElementById(`name-${secondIndex}`)
-        .value = firstPlayer.name;
-
-
-    document
-        .getElementById(`squad-${secondIndex}`)
-        .value = firstPlayer.squad;
-
-
-    document
-        .getElementById(`reason-${secondIndex}`)
-        .value = firstPlayer.reason;
-
-
-    // ------------------------------------------------
-    // CLEAR SELECTION
-    // ------------------------------------------------
-
-    document
-        .getElementById(`player-${firstIndex}`)
-        .classList
-        .remove("swap-selected");
+    playerCards[selectedSwapIndex]
+        .classList.remove("swap-selected");
 
 
     selectedSwapIndex = null;
 
 
-    // Regenerate graphic immediately.
-
     generateGraphic();
 
-
-    setImportStatus(
-        `${positionLabels[firstIndex]} and ${positionLabels[secondIndex]} swapped.`,
-        "success"
-    );
 }
 
 
-// ====================================================
-// IMPORT STATUS
-// ====================================================
+/* =========================================================
+   IMPORT STATUS
+   ========================================================= */
 
-function setImportStatus(message, type) {
+function setImportStatus(message, type = "") {
 
     const status =
         document.getElementById("importStatus");
 
 
-    status.textContent =
-        message;
+    status.textContent = message;
 
-
-    status.className =
-        "import-status";
+    status.className = "import-status";
 
 
     if (type) {
 
         status.classList.add(type);
+
     }
+
 }
 
 
-// ====================================================
-// IMPORT FROM EXCEL
-// ====================================================
+/* =========================================================
+   IMPORT FROM EXCEL / POWER QUERY
+   ========================================================= */
 
 function importFromExcel() {
 
@@ -406,47 +373,44 @@ function importFromExcel() {
     if (!rawText) {
 
         setImportStatus(
-            "Paste the Excel TOTW table first.",
+            "Paste the Excel Team of the Week table first.",
             "error"
         );
 
         return;
+
     }
 
 
-    // Excel copies columns separated by TAB
-    // and rows separated by line breaks.
-
-    let rows =
-        rawText
-            .split(/\r?\n/)
-            .filter(row => row.trim() !== "")
-            .map(row => row.split("\t"));
+    let rows = rawText
+        .split(/\r?\n/)
+        .filter(row => row.trim() !== "")
+        .map(row => row.split("\t"));
 
 
     if (rows.length === 0) {
 
         setImportStatus(
-            "No rows were found in the pasted data.",
+            "No rows were found.",
             "error"
         );
 
         return;
+
     }
 
 
-    // =================================================
-    // DETECT HEADER ROW
-    // =================================================
+    /* -----------------------------------------------------
+       REMOVE HEADER ROW IF PRESENT
+       ----------------------------------------------------- */
 
     const firstRow =
         rows[0]
-            .map(value =>
-                cleanText(value).toLowerCase()
-            );
+            .map(cleanText)
+            .map(value => value.toLowerCase());
 
 
-    const hasHeader =
+    const looksLikeHeader =
         firstRow.includes("season") &&
         firstRow.includes("weekend") &&
         firstRow.includes("totw position") &&
@@ -455,216 +419,225 @@ function importFromExcel() {
         firstRow.includes("reason");
 
 
-    if (hasHeader) {
+    if (looksLikeHeader) {
 
-        rows =
-            rows.slice(1);
+        rows.shift();
+
     }
 
 
-    // =================================================
-    // VALIDATE ROW COUNT
-    // =================================================
+    /* -----------------------------------------------------
+       VALIDATE NUMBER OF PLAYERS
+       ----------------------------------------------------- */
 
     if (rows.length !== 11) {
 
         setImportStatus(
-            `Expected 11 player rows but found ${rows.length}.`,
+            `Expected 11 players but found ${rows.length}.`,
             "error"
         );
 
         return;
+
     }
 
 
-    // =================================================
-    // PROCESS IMPORT
-    // =================================================
-
-    const importedSlots =
-        new Set();
+    const importedPlayers =
+        new Array(11).fill(null);
 
 
     let importedSeason = "";
+
     let importedWeekend = "";
 
 
-    for (const row of rows) {
+    /* -----------------------------------------------------
+       READ ROWS
+       ----------------------------------------------------- */
+
+    for (let rowNumber = 0;
+         rowNumber < rows.length;
+         rowNumber++) {
+
+
+        const row = rows[rowNumber];
+
 
         if (row.length < 6) {
 
             setImportStatus(
-                "One or more Excel rows does not contain all 6 columns.",
+                `Row ${rowNumber + 1} does not contain all 6 required columns.`,
                 "error"
             );
 
             return;
+
         }
 
 
         const season =
             cleanText(row[0]);
 
-
         const weekend =
             cleanText(row[1]);
 
-
         const totwPosition =
-            cleanText(row[2]);
-
+            cleanText(row[2]).toLowerCase();
 
         const player =
             cleanText(row[3]);
 
-
         const squad =
             cleanText(row[4]);
 
-
         const reason =
-            cleanText(row.slice(5).join("\t"));
+            cleanText(row.slice(5).join(" "));
 
 
-        const positionKey =
-            totwPosition.toLowerCase();
-
-
-        // Check position exists.
-
-        if (
-            !Object.prototype.hasOwnProperty.call(
-                importPositionMap,
-                positionKey
-            )
-        ) {
+        if (!(totwPosition in importPositionMap)) {
 
             setImportStatus(
-                `Unknown TOTW Position: ${totwPosition}`,
+                `Unknown TOTW Position: ${row[2]}`,
                 "error"
             );
 
             return;
+
         }
 
 
-        const index =
-            importPositionMap[positionKey];
+        const playerIndex =
+            importPositionMap[totwPosition];
 
 
-        // Prevent duplicated slots.
-
-        if (importedSlots.has(index)) {
+        if (importedPlayers[playerIndex] !== null) {
 
             setImportStatus(
-                `Duplicate TOTW Position: ${totwPosition}`,
+                `Duplicate TOTW Position: ${row[2]}`,
                 "error"
             );
 
             return;
+
         }
 
 
-        importedSlots.add(index);
+        importedPlayers[playerIndex] = {
+            name: player,
+            squad: squad,
+            reason: reason
+        };
 
-
-        // Capture season/weekend from first row.
 
         if (!importedSeason) {
 
-            importedSeason =
-                season;
+            importedSeason = season;
+
         }
 
 
         if (!importedWeekend) {
 
-            importedWeekend =
-                weekend;
+            importedWeekend = weekend;
+
         }
 
-
-        // Populate player.
-
-        document
-            .getElementById(`name-${index}`)
-            .value = player;
-
-
-        document
-            .getElementById(`squad-${index}`)
-            .value = squad;
-
-
-        document
-            .getElementById(`reason-${index}`)
-            .value = reason;
     }
 
 
-    // =================================================
-    // FINAL VALIDATION
-    // =================================================
+    /* -----------------------------------------------------
+       CHECK ALL 11 POSITIONS EXIST
+       ----------------------------------------------------- */
 
-    if (importedSlots.size !== 11) {
+    const missingPositions = [];
+
+
+    Object.entries(importPositionMap)
+        .forEach(([positionName, index]) => {
+
+            if (!importedPlayers[index]) {
+
+                missingPositions.push(positionName);
+
+            }
+
+        });
+
+
+    if (missingPositions.length > 0) {
 
         setImportStatus(
-            `Only ${importedSlots.size} unique positions were imported.`,
+            `Missing positions: ${missingPositions.join(", ")}`,
             "error"
         );
 
         return;
+
     }
 
 
-    // =================================================
-    // UPDATE TEAM DETAILS
-    // =================================================
+    /* -----------------------------------------------------
+       WRITE TEAM DETAILS
+       ----------------------------------------------------- */
 
-    document
-        .getElementById("season")
-        .value = importedSeason;
+    document.getElementById("season").value =
+        importedSeason;
 
-
-    document
-        .getElementById("weekend")
-        .value = importedWeekend;
+    document.getElementById("weekend").value =
+        importedWeekend;
 
 
-    // Clear any unfinished swap selection.
+    /* -----------------------------------------------------
+       WRITE PLAYER DETAILS
+       ----------------------------------------------------- */
 
-    if (selectedSwapIndex !== null) {
-
-        document
-            .getElementById(
-                `player-${selectedSwapIndex}`
-            )
-            .classList
-            .remove("swap-selected");
+    const playerCards =
+        document.querySelectorAll(".player");
 
 
-        selectedSwapIndex = null;
-    }
+    importedPlayers.forEach((player, index) => {
+
+        const card =
+            playerCards[index];
 
 
-    // Regenerate immediately.
+        card.querySelector(".player-name").value =
+            player.name;
 
-    generateGraphic();
+        card.querySelector(".player-squad").value =
+            player.squad;
+
+        card.querySelector(".player-reason").value =
+            player.reason;
+
+    });
+
+
+    selectedSwapIndex = null;
+
+
+    playerCards.forEach(card =>
+        card.classList.remove("swap-selected")
+    );
 
 
     setImportStatus(
-        "11 players imported successfully.",
+        "Team of the Week imported successfully.",
         "success"
     );
+
+
+    generateGraphic();
+
 }
 
 
-// ====================================================
-// ROUNDED RECTANGLE HELPER
-// ====================================================
+/* =========================================================
+   ROUNDED RECTANGLE
+   ========================================================= */
 
 function roundedRect(
-    ctx,
+    context,
     x,
     y,
     width,
@@ -672,508 +645,483 @@ function roundedRect(
     radius
 ) {
 
-    ctx.beginPath();
+    const r =
+        Math.min(
+            radius,
+            width / 2,
+            height / 2
+        );
 
-    ctx.roundRect(
-        x,
-        y,
-        width,
-        height,
-        radius
+
+    context.beginPath();
+
+    context.moveTo(
+        x + r,
+        y
     );
 
-    ctx.fill();
+    context.arcTo(
+        x + width,
+        y,
+        x + width,
+        y + height,
+        r
+    );
+
+    context.arcTo(
+        x + width,
+        y + height,
+        x,
+        y + height,
+        r
+    );
+
+    context.arcTo(
+        x,
+        y + height,
+        x,
+        y,
+        r
+    );
+
+    context.arcTo(
+        x,
+        y,
+        x + width,
+        y,
+        r
+    );
+
+    context.closePath();
+
 }
 
 
-// ====================================================
-// DRAW PLAYER
-// ====================================================
+/* =========================================================
+   DRAW PLAYER
+   ========================================================= */
 
 function drawPlayer(
-    ctx,
     x,
     y,
-    index
+    position,
+    name,
+    reason
 ) {
 
-    const name =
-        document
-            .getElementById(`name-${index}`)
-            .value
-            .trim();
+    const navy =
+        "#202133";
+
+    const white =
+        "#ffffff";
 
 
-    const reasonText =
-        document
-            .getElementById(`reason-${index}`)
-            .value
-            .trim();
-
-
-    const reasons =
-        reasonText
-            .split("|")
-            .map(reason => reason.trim())
-            .filter(Boolean);
-
-
-    // =================================================
-    // PLAYER CIRCLE
-    // =================================================
+    /* -----------------------------------------------------
+       POSITION CIRCLE
+       ----------------------------------------------------- */
 
     ctx.beginPath();
 
     ctx.arc(
         x,
         y,
-        29,
+        31,
         0,
         Math.PI * 2
     );
 
 
-    ctx.fillStyle =
-        "#202133";
+    ctx.fillStyle = navy;
 
     ctx.fill();
 
 
-    ctx.lineWidth =
-        5;
+    ctx.lineWidth = 4;
 
-    ctx.strokeStyle =
-        "#ffffff";
+    ctx.strokeStyle = white;
 
     ctx.stroke();
 
 
-    // =================================================
-    // POSITION LABEL
-    // =================================================
+    /* -----------------------------------------------------
+       POSITION TEXT
+       ----------------------------------------------------- */
 
-    ctx.textAlign =
-        "center";
+    ctx.fillStyle = white;
 
-    ctx.textBaseline =
-        "middle";
+    ctx.textAlign = "center";
 
-    ctx.fillStyle =
-        "#ffffff";
+    ctx.textBaseline = "middle";
 
 
-    if (positionLabels[index] === "SWEEP") {
+    if (position === "SWEEP") {
 
         ctx.font =
-            "bold 13px Arial";
+            "800 17px 'Barlow Condensed', Arial, sans-serif";
 
     } else {
 
         ctx.font =
-            "bold 18px Arial";
+            "800 24px 'Barlow Condensed', Arial, sans-serif";
+
     }
 
 
     ctx.fillText(
-        positionLabels[index],
+        position,
         x,
         y + 1
     );
 
 
-    // =================================================
-    // PLAYER NAME
-    // =================================================
-
-    const nameY =
-        y + 46;
-
+    /* -----------------------------------------------------
+       PLAYER NAME
+       ----------------------------------------------------- */
 
     ctx.font =
-        "bold 17px Arial";
+        "800 17px 'Barlow Condensed', Arial, sans-serif";
+
+
+    const namePadding =
+        12;
 
 
     const nameWidth =
         Math.max(
-            125,
-            ctx.measureText(
-                name.toUpperCase()
-            ).width + 20
+            92,
+            ctx.measureText(name).width +
+            (namePadding * 2)
         );
 
 
-    ctx.fillStyle =
-        "rgba(32, 33, 51, 0.96)";
+    const nameHeight =
+        28;
+
+
+    const nameX =
+        x - (nameWidth / 2);
+
+    const nameY =
+        y + 37;
 
 
     roundedRect(
         ctx,
-        x - nameWidth / 2,
-        nameY - 15,
+        nameX,
+        nameY,
         nameWidth,
-        30,
-        7
+        nameHeight,
+        6
     );
 
 
-    ctx.fillStyle =
-        "#ffffff";
+    ctx.fillStyle = navy;
+
+    ctx.fill();
+
+
+    ctx.fillStyle = white;
+
+    ctx.textAlign = "center";
+
+    ctx.textBaseline = "middle";
 
 
     ctx.fillText(
-        name.toUpperCase(),
+        name,
         x,
-        nameY
+        nameY + (nameHeight / 2)
     );
 
 
-    // =================================================
-    // PERFORMANCE REASONS
-    // =================================================
+    /* -----------------------------------------------------
+       REASONS
+       ----------------------------------------------------- */
+
+    const reasons =
+        reason
+            .split("|")
+            .map(item => item.trim())
+            .filter(Boolean);
+
 
     let reasonY =
-        nameY + 27;
+        nameY + nameHeight + 5;
 
 
     ctx.font =
-        "bold 15px Arial";
+        "600 17px 'Barlow Condensed', Arial, sans-serif";
 
 
-    reasons.forEach(reason => {
+    reasons.forEach(reasonText => {
+
+        const reasonPadding =
+            11;
+
 
         const reasonWidth =
             Math.max(
-                100,
-                ctx.measureText(reason).width + 20
+                70,
+                ctx.measureText(reasonText).width +
+                (reasonPadding * 2)
             );
 
 
-        ctx.fillStyle =
-            "rgba(32, 33, 51, 0.92)";
+        const reasonHeight =
+            25;
+
+
+        const reasonX =
+            x - (reasonWidth / 2);
 
 
         roundedRect(
             ctx,
-            x - reasonWidth / 2,
-            reasonY - 12,
+            reasonX,
+            reasonY,
             reasonWidth,
-            24,
+            reasonHeight,
             6
         );
 
 
-        ctx.fillStyle =
-            "#ffffff";
+        ctx.fillStyle = navy;
+
+        ctx.fill();
+
+
+        ctx.fillStyle = white;
+
+        ctx.textAlign = "center";
+
+        ctx.textBaseline = "middle";
 
 
         ctx.fillText(
-            reason,
+            reasonText,
             x,
-            reasonY
+            reasonY +
+            (reasonHeight / 2)
         );
 
 
-        reasonY += 26;
+        reasonY +=
+            reasonHeight + 4;
+
     });
+
 }
 
 
-// ====================================================
-// GENERATE GRAPHIC
-// ====================================================
+/* =========================================================
+   GENERATE GRAPHIC
+   ========================================================= */
 
 function generateGraphic() {
 
-    const canvas =
-        document.getElementById(
-            "totwCanvas"
-        );
+    const width =
+        canvas.width;
+
+    const height =
+        canvas.height;
 
 
-    const ctx =
-        canvas.getContext("2d");
+    const navy =
+        "#202133";
 
+    const yellow =
+        "#f2cf44";
+
+    const white =
+        "#ffffff";
+
+
+    /* -----------------------------------------------------
+       BACKGROUND
+       ----------------------------------------------------- */
 
     ctx.clearRect(
         0,
         0,
-        canvas.width,
-        canvas.height
+        width,
+        height
     );
 
 
-    // =================================================
-    // NAVY BACKGROUND
-    // =================================================
-
-    ctx.fillStyle =
-        "#202133";
-
+    ctx.fillStyle = navy;
 
     ctx.fillRect(
         0,
         0,
-        canvas.width,
-        canvas.height
+        width,
+        height
     );
 
 
-    // =================================================
-    // HEADER
-    // =================================================
+    /* -----------------------------------------------------
+       HEADER
+       ----------------------------------------------------- */
 
-    ctx.textAlign =
-        "center";
+    ctx.textAlign = "center";
 
-    ctx.textBaseline =
-        "alphabetic";
+    ctx.textBaseline = "middle";
 
 
-    ctx.fillStyle =
-        "#ffffff";
-
+    ctx.fillStyle = white;
 
     ctx.font =
-        "bold 52px Arial";
+        "700 42px 'Barlow Condensed', Arial, sans-serif";
 
 
     ctx.fillText(
         "SAINTFIELD HOCKEY CLUB",
-        canvas.width / 2,
-        65
+        width / 2,
+        42
     );
 
 
-    ctx.fillStyle =
-        "#f2cf44";
-
+    ctx.fillStyle = yellow;
 
     ctx.font =
-        "bold 42px Arial";
+        "900 58px 'Barlow Condensed', Arial, sans-serif";
 
 
     ctx.fillText(
         "TEAM OF THE WEEK",
-        canvas.width / 2,
-        118
+        width / 2,
+        91
     );
 
-
-    // =================================================
-    // SEASON / WEEKEND
-    // =================================================
 
     const season =
         document
             .getElementById("season")
-            .value;
+            .value
+            .trim();
 
 
     const weekend =
         document
             .getElementById("weekend")
-            .value;
+            .value
+            .trim();
 
 
-    ctx.fillStyle =
-        "#ffffff";
-
+    ctx.fillStyle = white;
 
     ctx.font =
-        "23px Arial";
+        "500 26px 'Barlow Condensed', Arial, sans-serif";
 
 
     ctx.fillText(
         `${season}  •  ${weekend}`,
-        canvas.width / 2,
-        158
+        width / 2,
+        132
     );
 
 
-    // =================================================
-    // WAIT FOR PITCH IMAGE
-    // =================================================
-
-    if (
-        !pitchImage.complete ||
-        pitchImage.naturalWidth === 0
-    ) {
-
-        ctx.fillStyle =
-            "#ffffff";
-
-
-        ctx.font =
-            "24px Arial";
-
-
-        ctx.fillText(
-            "Loading pitch...",
-            canvas.width / 2,
-            canvas.height / 2
-        );
-
-
-        return;
-    }
-
-
-    // =================================================
-    // AVAILABLE PITCH AREA
-    // =================================================
-
-    const areaY =
-        185;
-
-
-    const areaWidth =
-        canvas.width - 50;
-
-
-    const areaHeight =
-        canvas.height -
-        areaY -
-        25;
-
-
-    // =================================================
-    // PRESERVE IMAGE ASPECT RATIO
-    // =================================================
-
-    const imageRatio =
-        pitchImage.naturalWidth /
-        pitchImage.naturalHeight;
-
-
-    const areaRatio =
-        areaWidth /
-        areaHeight;
-
-
-    let drawWidth;
-    let drawHeight;
-
-
-    if (imageRatio > areaRatio) {
-
-        drawWidth =
-            areaWidth;
-
-
-        drawHeight =
-            drawWidth /
-            imageRatio;
-
-    } else {
-
-        drawHeight =
-            areaHeight;
-
-
-        drawWidth =
-            drawHeight *
-            imageRatio;
-    }
-
-
-    // =================================================
-    // CENTRE PITCH
-    // =================================================
+    /* -----------------------------------------------------
+       PITCH
+       ----------------------------------------------------- */
 
     const pitchX =
-        (
-            canvas.width -
-            drawWidth
-        ) / 2;
-
+        40;
 
     const pitchY =
-        areaY +
-        (
-            areaHeight -
-            drawHeight
-        ) / 2;
+        165;
+
+    const pitchWidth =
+        1000;
+
+    const pitchHeight =
+        1145;
 
 
-    // =================================================
-    // DRAW PITCH
-    // =================================================
+    if (pitchImage.complete &&
+        pitchImage.naturalWidth > 0) {
 
-    ctx.drawImage(
-        pitchImage,
-        pitchX,
-        pitchY,
-        drawWidth,
-        drawHeight
-    );
+        ctx.drawImage(
+            pitchImage,
+            pitchX,
+            pitchY,
+            pitchWidth,
+            pitchHeight
+        );
 
-
-    // =================================================
-    // 1-4-3-3 FORMATION
-    // =================================================
-
-    const formation = [
-
-        [0.50, 0.82],     // GK
-
-        [0.23, 0.61],     // LB
-        [0.39, 0.69],     // CB
-        [0.61, 0.69],     // CB
-        [0.77, 0.61],     // RB
-
-        [0.27, 0.41],     // LM
-        [0.50, 0.41],     // CM
-        [0.73, 0.41],     // RM
-
-        [0.27, 0.21],     // LW
-        [0.50, 0.17],     // CF
-        [0.73, 0.21]      // RW
-    ];
+    }
 
 
-    formation.forEach(
-        ([relativeX, relativeY], index) => {
+    /* -----------------------------------------------------
+       PLAYERS
+       ----------------------------------------------------- */
 
-            const x =
-                pitchX +
-                (
-                    drawWidth *
-                    relativeX
-                );
+    const playerCards =
+        document.querySelectorAll(".player");
 
 
-            const y =
-                pitchY +
-                (
-                    drawHeight *
-                    relativeY
-                );
+    playerCards.forEach((card, index) => {
 
-
-            drawPlayer(
-                ctx,
-                x,
-                y,
-                index
+        const name =
+            cleanText(
+                card
+                    .querySelector(".player-name")
+                    .value
             );
-        }
-    );
+
+
+        const reason =
+            cleanText(
+                card
+                    .querySelector(".player-reason")
+                    .value
+            );
+
+
+        const [relativeX, relativeY] =
+            positions[index];
+
+
+        const x =
+            pitchX +
+            (relativeX * pitchWidth);
+
+
+        const y =
+            pitchY +
+            (relativeY * pitchHeight);
+
+
+        drawPlayer(
+            x,
+            y,
+            positionLabels[index],
+            name,
+            reason
+        );
+
+    });
+
 }
 
 
-// ====================================================
-// DOWNLOAD PNG
-// ====================================================
+/* =========================================================
+   DOWNLOAD PNG
+   ========================================================= */
 
-function downloadGraphic() {
+async function downloadGraphic() {
+
+    /*
+        Wait for Barlow Condensed before drawing.
+
+        This prevents the browser exporting the PNG
+        using a fallback font if Google Fonts has not
+        finished loading.
+    */
+
+    await document.fonts.ready;
+
 
     generateGraphic();
-
-
-    const canvas =
-        document.getElementById(
-            "totwCanvas"
-        );
 
 
     const season =
@@ -1181,7 +1129,8 @@ function downloadGraphic() {
             .getElementById("season")
             .value
             .trim()
-            .replace(/\//g, "-");
+            .replace(/[\/\\]/g, "-")
+            .replace(/\s+/g, "-");
 
 
     const weekend =
@@ -1189,18 +1138,8 @@ function downloadGraphic() {
             .getElementById("weekend")
             .value
             .trim()
-            .replace(/\//g, "-")
+            .replace(/[\/\\]/g, "-")
             .replace(/\s+/g, "-");
-
-
-    const filename =
-        `Saintfield-TOTW-${season}-${weekend}.png`;
-
-
-    const image =
-        canvas.toDataURL(
-            "image/png"
-        );
 
 
     const link =
@@ -1208,36 +1147,39 @@ function downloadGraphic() {
 
 
     link.download =
-        filename;
+        `Saintfield-TOTW-${season}-${weekend}.png`;
 
 
     link.href =
-        image;
+        canvas.toDataURL("image/png");
 
 
-    document.body.appendChild(
-        link
-    );
+    document.body.appendChild(link);
 
 
     link.click();
 
 
-    document.body.removeChild(
-        link
-    );
+    document.body.removeChild(link);
+
 }
 
 
-// ====================================================
-// BUTTON EVENTS
-// ====================================================
+/* =========================================================
+   EVENT LISTENERS
+   ========================================================= */
 
 document
     .getElementById("generateButton")
     .addEventListener(
         "click",
-        generateGraphic
+        async () => {
+
+            await document.fonts.ready;
+
+            generateGraphic();
+
+        }
     );
 
 
@@ -1253,18 +1195,26 @@ document
     .getElementById("importButton")
     .addEventListener(
         "click",
-        importFromExcel
+        async () => {
+
+            await document.fonts.ready;
+
+            importFromExcel();
+
+        }
     );
 
 
-// ====================================================
-// INITIALISE
-// ====================================================
+/* =========================================================
+   INITIALISE
+   ========================================================= */
 
 buildPlayerInputs();
 
 
-pitchImage.onload = () => {
+pitchImage.onload = async () => {
+
+    await document.fonts.ready;
 
     generateGraphic();
 
@@ -1273,5 +1223,10 @@ pitchImage.onload = () => {
 
 if (pitchImage.complete) {
 
-    generateGraphic();
+    document.fonts.ready.then(() => {
+
+        generateGraphic();
+
+    });
+
 }
