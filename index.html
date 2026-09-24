@@ -3,130 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Saintfield Hockey - Team of the Week</title>
 
+    <!-- Barlow Condensed -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
 
     <link rel="stylesheet" href="./css/style.css">
 </head>
 
-
 <body>
 
-    <!-- ==================================================
-         HEADER
-         ================================================== -->
-
     <header>
-
-        <h1>
-            SAINTFIELD HOCKEY CLUB
-        </h1>
-
-        <h2>
-            TEAM OF THE WEEK GENERATOR
-        </h2>
-
+        <h1>SAINTFIELD HOCKEY CLUB</h1>
+        <h2>TEAM OF THE WEEK GENERATOR</h2>
     </header>
-
-
-    <!-- ==================================================
-         MAIN APPLICATION
-         ================================================== -->
 
     <main class="app">
 
-
-        <!-- ==============================================
-             CONTROLS
-             ============================================== -->
-
         <section class="controls">
-
-
-            <!-- ==========================================
-                 EXCEL IMPORT
-                 ========================================== -->
 
             <div class="section-title">
                 Import Team of the Week
             </div>
-
 
             <p class="hint">
                 Copy the Team of the Week table from Excel,
                 including the headers, and paste it below.
             </p>
 
-
             <textarea
                 id="excelImport"
                 rows="8"
                 placeholder="Paste Excel TOTW table here..."></textarea>
 
-
-            <button
-                id="importButton"
-                type="button">
-
+            <button id="importButton" type="button">
                 Import XI
-
             </button>
 
+            <div id="importStatus" class="import-status"></div>
 
-            <div
-                id="importStatus"
-                class="import-status">
-            </div>
-
-
-            <!-- ==========================================
-                 TEAM DETAILS
-                 ========================================== -->
 
             <div class="section-title">
                 Team Details
             </div>
 
-
             <div class="team-details">
 
                 <label>
-
                     Season
-
                     <input
                         id="season"
                         type="text"
-                        value="2026/27">
-
+                        value="2026/27"
+                    >
                 </label>
 
-
                 <label>
-
                     Weekend
-
                     <input
                         id="weekend"
                         type="text"
-                        value="Weekend 3">
-
+                        value="Weekend 3"
+                    >
                 </label>
 
             </div>
 
-
-            <!-- ==========================================
-                 STARTING XI
-                 ========================================== -->
 
             <div class="section-title">
                 Starting XI
             </div>
-
 
             <p class="hint">
                 Edit players manually if required.
@@ -134,72 +86,38 @@
                 keeping the formation positions fixed.
             </p>
 
-
             <div id="players"></div>
 
-
-            <!-- ==========================================
-                 ACTION BUTTONS
-                 ========================================== -->
-
-            <button
-                id="generateButton"
-                type="button">
-
+            <button id="generateButton" type="button">
                 Generate TOTW
-
             </button>
 
-
-            <button
-                id="downloadButton"
-                type="button">
-
+            <button id="downloadButton" type="button">
                 Download PNG
-
             </button>
-
 
         </section>
 
 
-        <!-- ==============================================
-             PREVIEW
-             ============================================== -->
-
         <section class="preview">
-
 
             <div class="section-title">
                 Preview
             </div>
 
-
             <div class="canvas-wrapper">
-
                 <canvas
                     id="totwCanvas"
                     width="1080"
                     height="1350">
-
                 </canvas>
-
             </div>
-
 
         </section>
 
-
     </main>
-
-
-    <!-- ==================================================
-         JAVASCRIPT
-         ================================================== -->
 
     <script src="./js/totw.js"></script>
 
-
 </body>
-
 </html>
