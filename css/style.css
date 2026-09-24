@@ -45,11 +45,16 @@ header h2 {
 }
 
 .section-title {
+    margin-top: 22px;
     margin-bottom: 15px;
     padding-bottom: 8px;
     border-bottom: 3px solid #f2cf44;
     font-size: 20px;
     font-weight: bold;
+}
+
+.section-title:first-child {
+    margin-top: 0;
 }
 
 .team-details {
@@ -64,25 +69,58 @@ label {
     font-weight: bold;
 }
 
-input {
+input,
+textarea {
     width: 100%;
     margin-top: 5px;
     padding: 8px;
     border: 1px solid #cccccc;
     border-radius: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+textarea {
+    min-height: 130px;
+    resize: vertical;
+    font-size: 12px;
 }
 
 .hint {
     margin: -5px 0 15px;
     color: #666666;
     font-size: 12px;
+    line-height: 1.4;
+}
+
+.import-status {
+    min-height: 20px;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.import-status.success {
+    color: #267326;
+}
+
+.import-status.error {
+    color: #b42318;
 }
 
 .player {
     margin-bottom: 12px;
     padding: 10px;
     background: #f5f5f5;
+    border: 2px solid transparent;
     border-radius: 7px;
+    transition:
+        border-color 0.15s ease,
+        background 0.15s ease;
+}
+
+.player.swap-selected {
+    border-color: #f2cf44;
+    background: #fffbea;
 }
 
 .player-title {
@@ -101,25 +139,33 @@ input {
     margin-top: 7px;
 }
 
+.player-actions {
+    margin-top: 7px;
+}
+
 button {
     width: 100%;
     margin-top: 10px;
     padding: 13px;
-
     border: 0;
     border-radius: 6px;
-
     background: #202133;
     color: #ffffff;
-
     font-size: 16px;
     font-weight: bold;
-
     cursor: pointer;
 }
 
 button:hover {
     opacity: 0.9;
+}
+
+.swap-button {
+    margin-top: 0;
+    padding: 8px 10px;
+    background: #f2cf44;
+    color: #202133;
+    font-size: 12px;
 }
 
 .canvas-wrapper {
@@ -130,26 +176,15 @@ button:hover {
 
 #totwCanvas {
     display: block;
-
     width: 100%;
     max-width: 810px;
     height: auto;
-
     background: #202133;
-
-    box-shadow:
-        0 3px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
 }
 
-
-/* =========================
-   MOBILE
-========================= */
-
 @media (max-width: 950px) {
-
     .app {
         grid-template-columns: 1fr;
     }
-
 }
