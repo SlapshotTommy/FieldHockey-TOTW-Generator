@@ -24,6 +24,28 @@ const positions = [
 
 
 // ====================================================
+// POSITION LABELS
+//
+// These are displayed inside the player circles.
+// Order must match the positions/player arrays.
+// ====================================================
+
+const positionLabels = [
+    "GK",
+    "LB",
+    "SWEEP",
+    "CB",
+    "RB",
+    "LM",
+    "CM",
+    "RM",
+    "LW",
+    "CF",
+    "RW"
+];
+
+
+// ====================================================
 // SAMPLE DATA
 // ====================================================
 
@@ -76,7 +98,7 @@ function buildPlayerInputs() {
         div.innerHTML = `
 
             <div class="player-title">
-                ${index + 1}. ${position}
+                ${positionLabels[index]} - ${position}
             </div>
 
             <div class="player-row">
@@ -167,11 +189,7 @@ function drawPlayer(
     //
     // 2 Goals | POTM | 4-1 Win
     //
-    // into:
-    //
-    // 2 Goals
-    // POTM
-    // 4-1 Win
+    // into individual performance bubbles.
 
     const reasons =
         reasonText
@@ -209,7 +227,7 @@ function drawPlayer(
 
 
     // =================================================
-    // PLAYER NUMBER
+    // POSITION LABEL
     // =================================================
 
     ctx.textAlign = "center";
@@ -217,12 +235,24 @@ function drawPlayer(
 
     ctx.fillStyle = "#ffffff";
 
-    ctx.font =
-        "bold 21px Arial";
+
+    // SWEEP needs a smaller font to fit comfortably
+    // inside the same circle.
+
+    if (positionLabels[index] === "SWEEP") {
+
+        ctx.font =
+            "bold 13px Arial";
+
+    } else {
+
+        ctx.font =
+            "bold 18px Arial";
+    }
 
 
     ctx.fillText(
-        index + 1,
+        positionLabels[index],
         x,
         y + 1
     );
@@ -487,8 +517,6 @@ function generateGraphic() {
     // AVAILABLE PITCH AREA
     // =================================================
 
-    const areaX = 25;
-
     const areaY = 185;
 
 
@@ -577,12 +605,16 @@ function generateGraphic() {
     // =================================================
     // 1-4-3-3 FORMATION
     //
-    // Coordinates are percentages of the pitch image.
-    //
-    // Lower Y = further up the pitch.
-    // Higher Y = further down the pitch.
-    //
     // Team attacks towards the TOP goal.
+    //
+    // GK
+    //
+    // LB     SWEEP     CB     RB
+    //
+    // LM       CM       RM
+    //
+    // LW       CF       RW
+    //
     // =================================================
 
     const formation = [
@@ -591,50 +623,42 @@ function generateGraphic() {
         // GOALKEEPER
         // =============================================
 
-        [0.50, 0.82],
+        [0.50, 0.82],     // GK
 
 
         // =============================================
         // DEFENDERS
-        //
-        // Outside defenders push slightly higher.
-        //
-        // Central defenders sit deeper.
         // =============================================
-        
-        [0.23, 0.61],     // Defender 1 - moved right
-        
-        [0.39, 0.69],     // Defender 2
-        
-        [0.61, 0.69],     // Defender 3
-        
-        [0.77, 0.61],     // Defender 4 - moved left
+
+        [0.23, 0.61],     // LB
+
+        [0.39, 0.69],     // SWEEP
+
+        [0.61, 0.69],     // CB
+
+        [0.77, 0.61],     // RB
 
 
         // =============================================
         // MIDFIELDERS
         // =============================================
 
-        [0.27, 0.41],     // Midfielder 1
+        [0.27, 0.41],     // LM
 
-        [0.50, 0.41],     // Midfielder 2
+        [0.50, 0.41],     // CM
 
-        [0.73, 0.41],     // Midfielder 3
+        [0.73, 0.41],     // RM
 
 
         // =============================================
         // FORWARDS
-        //
-        // Centre forward leads the line.
-        //
-        // Outside forwards sit slightly deeper.
         // =============================================
 
-        [0.27, 0.21],     // Forward 1
+        [0.27, 0.21],     // LW
 
-        [0.50, 0.17],     // Forward 2
+        [0.50, 0.17],     // CF
 
-        [0.73, 0.21]      // Forward 3
+        [0.73, 0.21]      // RW
     ];
 
 
