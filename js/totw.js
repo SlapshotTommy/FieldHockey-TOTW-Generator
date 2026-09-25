@@ -1032,6 +1032,13 @@ function importFromExcel() {
     );
 
 
+    /*
+        Redraw immediately after import.
+
+        This does NOT wait for the asset-loading
+        function, so Import XI remains responsive.
+    */
+
     generateGraphic();
 
 }
@@ -1452,7 +1459,8 @@ function generateGraphic() {
     else {
 
         /*
-            Fallback if bg.png cannot be loaded.
+            Fallback to Saintfield navy if
+            bg.png isn't ready.
         */
 
         ctx.fillStyle =
@@ -1667,12 +1675,12 @@ async function waitForGraphicAssets() {
 
 
     /*
-        Wait for background image.
+        Wait for background image if it is
+        still actively loading.
     */
 
     if (
-        !backgroundImage.complete ||
-        backgroundImage.naturalWidth === 0
+        !backgroundImage.complete
     ) {
 
         imagePromises.push(
@@ -1680,11 +1688,17 @@ async function waitForGraphicAssets() {
             new Promise(
                 resolve => {
 
-                    backgroundImage.onload =
-                        resolve;
+                    backgroundImage.addEventListener(
+                        "load",
+                        resolve,
+                        { once: true }
+                    );
 
-                    backgroundImage.onerror =
-                        resolve;
+                    backgroundImage.addEventListener(
+                        "error",
+                        resolve,
+                        { once: true }
+                    );
 
                 }
             )
@@ -1695,12 +1709,12 @@ async function waitForGraphicAssets() {
 
 
     /*
-        Wait for pitch image.
+        Wait for pitch image if it is
+        still actively loading.
     */
 
     if (
-        !pitchImage.complete ||
-        pitchImage.naturalWidth === 0
+        !pitchImage.complete
     ) {
 
         imagePromises.push(
@@ -1708,11 +1722,17 @@ async function waitForGraphicAssets() {
             new Promise(
                 resolve => {
 
-                    pitchImage.onload =
-                        resolve;
+                    pitchImage.addEventListener(
+                        "load",
+                        resolve,
+                        { once: true }
+                    );
 
-                    pitchImage.onerror =
-                        resolve;
+                    pitchImage.addEventListener(
+                        "error",
+                        resolve,
+                        { once: true }
+                    );
 
                 }
             )
@@ -1742,15 +1762,16 @@ async function waitForGraphicAssets() {
 async function downloadGraphic() {
 
     /*
-        Make absolutely sure the font,
-        background and pitch are ready.
+        For download we DO want to wait
+        for all graphic assets.
     */
 
     await waitForGraphicAssets();
 
 
     /*
-        Final redraw before export.
+        Final redraw immediately before
+        exporting the PNG.
     */
 
     generateGraphic();
@@ -1829,7 +1850,7 @@ async function downloadGraphic() {
 
 
 /* ---------------------------------------------------------
-   DOWNLOAD
+   DOWNLOAD PNG
    --------------------------------------------------------- */
 
 document
@@ -1844,6 +1865,10 @@ document
 
 /* ---------------------------------------------------------
    EXCEL IMPORT
+
+   IMPORTANT:
+   Import does NOT wait for graphic assets.
+   It should respond immediately when clicked.
    --------------------------------------------------------- */
 
 document
@@ -1852,13 +1877,7 @@ document
     )
     .addEventListener(
         "click",
-        async () => {
-
-            await waitForGraphicAssets();
-
-            importFromExcel();
-
-        }
+        importFromExcel
     );
 
 
@@ -1896,6 +1915,10 @@ document
 
 buildPlayerInputs();
 
+
+/*
+    Draw once the font and images are ready.
+*/
 
 waitForGraphicAssets()
     .then(
