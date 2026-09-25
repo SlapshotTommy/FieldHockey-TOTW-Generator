@@ -157,7 +157,7 @@ const backgroundImage =
     new Image();
 
 backgroundImage.src =
-    "./assets/bg.png";
+    "./assets/BG.png";
 
 
 /* ---------------------------------------------------------
