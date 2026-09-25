@@ -78,6 +78,7 @@ header h2 {
     font-size: 22px;
     font-weight: 800;
     letter-spacing: 0.3px;
+    text-align: center;
 }
 
 .section-title:first-child {
