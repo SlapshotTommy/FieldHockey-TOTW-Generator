@@ -1590,22 +1590,6 @@ async function downloadGraphic() {
 
 document
     .getElementById(
-        "generateButton"
-    )
-    .addEventListener(
-        "click",
-        async () => {
-
-            await waitForGraphicAssets();
-
-            generateGraphic();
-
-        }
-    );
-
-
-document
-    .getElementById(
         "downloadButton"
     )
     .addEventListener(
