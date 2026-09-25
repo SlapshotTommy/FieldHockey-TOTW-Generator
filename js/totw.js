@@ -146,6 +146,20 @@ const canvas = document.getElementById("totwCanvas");
 
 const ctx = canvas.getContext("2d");
 
+
+/* ---------------------------------------------------------
+   BACKGROUND IMAGE
+   --------------------------------------------------------- */
+
+const backgroundImage = new Image();
+
+backgroundImage.src = "./assets/bg.png";
+
+
+/* ---------------------------------------------------------
+   PITCH IMAGE
+   --------------------------------------------------------- */
+
 const pitchImage = new Image();
 
 pitchImage.src = "./assets/Pitch.png";
@@ -168,19 +182,110 @@ function cleanText(value) {
 
 
 /* =========================================================
+   DRAW IMAGE USING "COVER"
+   ========================================================= */
+
+function drawImageCover(
+    context,
+    image,
+    x,
+    y,
+    width,
+    height
+) {
+
+    const imageRatio =
+        image.naturalWidth /
+        image.naturalHeight;
+
+    const targetRatio =
+        width /
+        height;
+
+
+    let sourceWidth =
+        image.naturalWidth;
+
+    let sourceHeight =
+        image.naturalHeight;
+
+    let sourceX = 0;
+
+    let sourceY = 0;
+
+
+    /*
+        Image is proportionally wider than the target.
+
+        Crop the left and right edges.
+    */
+
+    if (imageRatio > targetRatio) {
+
+        sourceWidth =
+            image.naturalHeight *
+            targetRatio;
+
+        sourceX =
+            (image.naturalWidth -
+             sourceWidth) / 2;
+
+    }
+
+    /*
+        Image is proportionally taller than the target.
+
+        Crop the top and bottom edges.
+    */
+
+    else {
+
+        sourceHeight =
+            image.naturalWidth /
+            targetRatio;
+
+        sourceY =
+            (image.naturalHeight -
+             sourceHeight) / 2;
+
+    }
+
+
+    context.drawImage(
+        image,
+
+        sourceX,
+        sourceY,
+        sourceWidth,
+        sourceHeight,
+
+        x,
+        y,
+        width,
+        height
+    );
+
+}
+
+
+/* =========================================================
    BUILD PLAYER INPUTS
    ========================================================= */
 
 function buildPlayerInputs() {
 
-    const container = document.getElementById("players");
+    const container =
+        document.getElementById("players");
+
 
     container.innerHTML = "";
 
 
     samplePlayers.forEach((player, index) => {
 
-        const wrapper = document.createElement("div");
+        const wrapper =
+            document.createElement("div");
+
 
         wrapper.className = "player";
 
@@ -241,13 +346,20 @@ function buildPlayerInputs() {
         .querySelectorAll(".swap-button")
         .forEach(button => {
 
-            button.addEventListener("click", () => {
+            button.addEventListener(
+                "click",
+                () => {
 
-                const index = Number(button.dataset.index);
+                    const index =
+                        Number(
+                            button.dataset.index
+                        );
 
-                handleSwap(index);
 
-            });
+                    handleSwap(index);
+
+                }
+            );
 
         });
 
@@ -260,14 +372,17 @@ function buildPlayerInputs() {
 
 function handleSwap(index) {
 
-    const playerCards = document.querySelectorAll(".player");
+    const playerCards =
+        document.querySelectorAll(".player");
 
 
     if (selectedSwapIndex === null) {
 
         selectedSwapIndex = index;
 
-        playerCards[index].classList.add("swap-selected");
+        playerCards[index]
+            .classList
+            .add("swap-selected");
 
         return;
 
@@ -276,7 +391,9 @@ function handleSwap(index) {
 
     if (selectedSwapIndex === index) {
 
-        playerCards[index].classList.remove("swap-selected");
+        playerCards[index]
+            .classList
+            .remove("swap-selected");
 
         selectedSwapIndex = null;
 
@@ -285,43 +402,74 @@ function handleSwap(index) {
     }
 
 
-    const first = playerCards[selectedSwapIndex];
+    const first =
+        playerCards[selectedSwapIndex];
 
-    const second = playerCards[index];
+    const second =
+        playerCards[index];
 
 
     const firstName =
-        first.querySelector(".player-name").value;
+        first
+            .querySelector(".player-name")
+            .value;
 
     const firstSquad =
-        first.querySelector(".player-squad").value;
+        first
+            .querySelector(".player-squad")
+            .value;
 
     const firstReason =
-        first.querySelector(".player-reason").value;
+        first
+            .querySelector(".player-reason")
+            .value;
 
 
-    first.querySelector(".player-name").value =
-        second.querySelector(".player-name").value;
-
-    first.querySelector(".player-squad").value =
-        second.querySelector(".player-squad").value;
-
-    first.querySelector(".player-reason").value =
-        second.querySelector(".player-reason").value;
+    first
+        .querySelector(".player-name")
+        .value =
+        second
+            .querySelector(".player-name")
+            .value;
 
 
-    second.querySelector(".player-name").value =
+    first
+        .querySelector(".player-squad")
+        .value =
+        second
+            .querySelector(".player-squad")
+            .value;
+
+
+    first
+        .querySelector(".player-reason")
+        .value =
+        second
+            .querySelector(".player-reason")
+            .value;
+
+
+    second
+        .querySelector(".player-name")
+        .value =
         firstName;
 
-    second.querySelector(".player-squad").value =
+
+    second
+        .querySelector(".player-squad")
+        .value =
         firstSquad;
 
-    second.querySelector(".player-reason").value =
+
+    second
+        .querySelector(".player-reason")
+        .value =
         firstReason;
 
 
     playerCards[selectedSwapIndex]
-        .classList.remove("swap-selected");
+        .classList
+        .remove("swap-selected");
 
 
     selectedSwapIndex = null;
@@ -336,20 +484,30 @@ function handleSwap(index) {
    IMPORT STATUS
    ========================================================= */
 
-function setImportStatus(message, type = "") {
+function setImportStatus(
+    message,
+    type = ""
+) {
 
     const status =
-        document.getElementById("importStatus");
+        document.getElementById(
+            "importStatus"
+        );
 
 
-    status.textContent = message;
+    status.textContent =
+        message;
 
-    status.className = "import-status";
+
+    status.className =
+        "import-status";
 
 
     if (type) {
 
-        status.classList.add(type);
+        status
+            .classList
+            .add(type);
 
     }
 
@@ -363,7 +521,9 @@ function setImportStatus(message, type = "") {
 function importFromExcel() {
 
     const importBox =
-        document.getElementById("excelImport");
+        document.getElementById(
+            "excelImport"
+        );
 
 
     const rawText =
@@ -382,10 +542,17 @@ function importFromExcel() {
     }
 
 
-    let rows = rawText
-        .split(/\r?\n/)
-        .filter(row => row.trim() !== "")
-        .map(row => row.split("\t"));
+    let rows =
+        rawText
+            .split(/\r?\n/)
+            .filter(
+                row =>
+                    row.trim() !== ""
+            )
+            .map(
+                row =>
+                    row.split("\t")
+            );
 
 
     if (rows.length === 0) {
@@ -407,7 +574,10 @@ function importFromExcel() {
     const firstRow =
         rows[0]
             .map(cleanText)
-            .map(value => value.toLowerCase());
+            .map(
+                value =>
+                    value.toLowerCase()
+            );
 
 
     const looksLikeHeader =
@@ -455,12 +625,14 @@ function importFromExcel() {
        READ ROWS
        ----------------------------------------------------- */
 
-    for (let rowNumber = 0;
-         rowNumber < rows.length;
-         rowNumber++) {
+    for (
+        let rowNumber = 0;
+        rowNumber < rows.length;
+        rowNumber++
+    ) {
 
-
-        const row = rows[rowNumber];
+        const row =
+            rows[rowNumber];
 
 
         if (row.length < 6) {
@@ -482,7 +654,8 @@ function importFromExcel() {
             cleanText(row[1]);
 
         const totwPosition =
-            cleanText(row[2]).toLowerCase();
+            cleanText(row[2])
+                .toLowerCase();
 
         const player =
             cleanText(row[3]);
@@ -491,10 +664,17 @@ function importFromExcel() {
             cleanText(row[4]);
 
         const reason =
-            cleanText(row.slice(5).join(" "));
+            cleanText(
+                row
+                    .slice(5)
+                    .join(" ")
+            );
 
 
-        if (!(totwPosition in importPositionMap)) {
+        if (
+            !(totwPosition
+              in importPositionMap)
+        ) {
 
             setImportStatus(
                 `Unknown TOTW Position: ${row[2]}`,
@@ -507,10 +687,16 @@ function importFromExcel() {
 
 
         const playerIndex =
-            importPositionMap[totwPosition];
+            importPositionMap[
+                totwPosition
+            ];
 
 
-        if (importedPlayers[playerIndex] !== null) {
+        if (
+            importedPlayers[
+                playerIndex
+            ] !== null
+        ) {
 
             setImportStatus(
                 `Duplicate TOTW Position: ${row[2]}`,
@@ -522,23 +708,31 @@ function importFromExcel() {
         }
 
 
-        importedPlayers[playerIndex] = {
+        importedPlayers[
+            playerIndex
+        ] = {
+
             name: player,
+
             squad: squad,
+
             reason: reason
+
         };
 
 
         if (!importedSeason) {
 
-            importedSeason = season;
+            importedSeason =
+                season;
 
         }
 
 
         if (!importedWeekend) {
 
-            importedWeekend = weekend;
+            importedWeekend =
+                weekend;
 
         }
 
@@ -552,19 +746,27 @@ function importFromExcel() {
     const missingPositions = [];
 
 
-    Object.entries(importPositionMap)
-        .forEach(([positionName, index]) => {
+    Object
+        .entries(importPositionMap)
+        .forEach(
+            ([positionName, index]) => {
 
-            if (!importedPlayers[index]) {
+                if (
+                    !importedPlayers[index]
+                ) {
 
-                missingPositions.push(positionName);
+                    missingPositions
+                        .push(positionName);
+
+                }
 
             }
+        );
 
-        });
 
-
-    if (missingPositions.length > 0) {
+    if (
+        missingPositions.length > 0
+    ) {
 
         setImportStatus(
             `Missing positions: ${missingPositions.join(", ")}`,
@@ -580,10 +782,15 @@ function importFromExcel() {
        WRITE TEAM DETAILS
        ----------------------------------------------------- */
 
-    document.getElementById("season").value =
+    document
+        .getElementById("season")
+        .value =
         importedSeason;
 
-    document.getElementById("weekend").value =
+
+    document
+        .getElementById("weekend")
+        .value =
         importedWeekend;
 
 
@@ -592,32 +799,56 @@ function importFromExcel() {
        ----------------------------------------------------- */
 
     const playerCards =
-        document.querySelectorAll(".player");
+        document.querySelectorAll(
+            ".player"
+        );
 
 
-    importedPlayers.forEach((player, index) => {
+    importedPlayers
+        .forEach(
+            (player, index) => {
 
-        const card =
-            playerCards[index];
+                const card =
+                    playerCards[index];
 
 
-        card.querySelector(".player-name").value =
-            player.name;
+                card
+                    .querySelector(
+                        ".player-name"
+                    )
+                    .value =
+                    player.name;
 
-        card.querySelector(".player-squad").value =
-            player.squad;
 
-        card.querySelector(".player-reason").value =
-            player.reason;
+                card
+                    .querySelector(
+                        ".player-squad"
+                    )
+                    .value =
+                    player.squad;
 
-    });
+
+                card
+                    .querySelector(
+                        ".player-reason"
+                    )
+                    .value =
+                    player.reason;
+
+            }
+        );
 
 
     selectedSwapIndex = null;
 
 
-    playerCards.forEach(card =>
-        card.classList.remove("swap-selected")
+    playerCards.forEach(
+        card =>
+            card
+                .classList
+                .remove(
+                    "swap-selected"
+                )
     );
 
 
@@ -655,11 +886,13 @@ function roundedRect(
 
     context.beginPath();
 
+
     context.moveTo(
         x + r,
         y
     );
 
+
     context.arcTo(
         x + width,
         y,
@@ -667,6 +900,7 @@ function roundedRect(
         y + height,
         r
     );
+
 
     context.arcTo(
         x + width,
@@ -676,6 +910,7 @@ function roundedRect(
         r
     );
 
+
     context.arcTo(
         x,
         y + height,
@@ -684,6 +919,7 @@ function roundedRect(
         r
     );
 
+
     context.arcTo(
         x,
         y,
@@ -691,6 +927,7 @@ function roundedRect(
         y,
         r
     );
+
 
     context.closePath();
 
@@ -722,6 +959,7 @@ function drawPlayer(
 
     ctx.beginPath();
 
+
     ctx.arc(
         x,
         y,
@@ -731,14 +969,20 @@ function drawPlayer(
     );
 
 
-    ctx.fillStyle = navy;
+    ctx.fillStyle =
+        navy;
+
 
     ctx.fill();
 
 
-    ctx.lineWidth = 4;
+    ctx.lineWidth =
+        4;
 
-    ctx.strokeStyle = white;
+
+    ctx.strokeStyle =
+        white;
+
 
     ctx.stroke();
 
@@ -747,11 +991,16 @@ function drawPlayer(
        POSITION TEXT
        ----------------------------------------------------- */
 
-    ctx.fillStyle = white;
+    ctx.fillStyle =
+        white;
 
-    ctx.textAlign = "center";
 
-    ctx.textBaseline = "middle";
+    ctx.textAlign =
+        "center";
+
+
+    ctx.textBaseline =
+        "middle";
 
 
     if (position === "SWEEP") {
@@ -759,7 +1008,9 @@ function drawPlayer(
         ctx.font =
             "800 17px 'Barlow Condensed', Arial, sans-serif";
 
-    } else {
+    }
+
+    else {
 
         ctx.font =
             "800 24px 'Barlow Condensed', Arial, sans-serif";
@@ -799,7 +1050,9 @@ function drawPlayer(
 
 
     const nameX =
-        x - (nameWidth / 2);
+        x -
+        (nameWidth / 2);
+
 
     const nameY =
         y + 37;
@@ -815,22 +1068,30 @@ function drawPlayer(
     );
 
 
-    ctx.fillStyle = navy;
+    ctx.fillStyle =
+        navy;
+
 
     ctx.fill();
 
 
-    ctx.fillStyle = white;
+    ctx.fillStyle =
+        white;
 
-    ctx.textAlign = "center";
 
-    ctx.textBaseline = "middle";
+    ctx.textAlign =
+        "center";
+
+
+    ctx.textBaseline =
+        "middle";
 
 
     ctx.fillText(
         name,
         x,
-        nameY + (nameHeight / 2)
+        nameY +
+        (nameHeight / 2)
     );
 
 
@@ -841,74 +1102,94 @@ function drawPlayer(
     const reasons =
         reason
             .split("|")
-            .map(item => item.trim())
+            .map(
+                item =>
+                    item.trim()
+            )
             .filter(Boolean);
 
 
     let reasonY =
-        nameY + nameHeight + 5;
+        nameY +
+        nameHeight +
+        5;
 
 
     ctx.font =
         "600 17px 'Barlow Condensed', Arial, sans-serif";
 
 
-    reasons.forEach(reasonText => {
+    reasons.forEach(
+        reasonText => {
 
-        const reasonPadding =
-            11;
+            const reasonPadding =
+                11;
 
 
-        const reasonWidth =
-            Math.max(
-                70,
-                ctx.measureText(reasonText).width +
-                (reasonPadding * 2)
+            const reasonWidth =
+                Math.max(
+                    70,
+                    ctx
+                        .measureText(
+                            reasonText
+                        )
+                        .width +
+                    (reasonPadding * 2)
+                );
+
+
+            const reasonHeight =
+                25;
+
+
+            const reasonX =
+                x -
+                (reasonWidth / 2);
+
+
+            roundedRect(
+                ctx,
+                reasonX,
+                reasonY,
+                reasonWidth,
+                reasonHeight,
+                6
             );
 
 
-        const reasonHeight =
-            25;
+            ctx.fillStyle =
+                navy;
 
 
-        const reasonX =
-            x - (reasonWidth / 2);
+            ctx.fill();
 
 
-        roundedRect(
-            ctx,
-            reasonX,
-            reasonY,
-            reasonWidth,
-            reasonHeight,
-            6
-        );
+            ctx.fillStyle =
+                white;
 
 
-        ctx.fillStyle = navy;
-
-        ctx.fill();
-
-
-        ctx.fillStyle = white;
-
-        ctx.textAlign = "center";
-
-        ctx.textBaseline = "middle";
+            ctx.textAlign =
+                "center";
 
 
-        ctx.fillText(
-            reasonText,
-            x,
-            reasonY +
-            (reasonHeight / 2)
-        );
+            ctx.textBaseline =
+                "middle";
 
 
-        reasonY +=
-            reasonHeight + 4;
+            ctx.fillText(
+                reasonText,
+                x,
+                reasonY +
+                (reasonHeight / 2)
+            );
 
-    });
+
+            reasonY +=
+                reasonHeight +
+                4;
+
+        }
+    );
 
 }
 
@@ -937,7 +1218,7 @@ function generateGraphic() {
 
 
     /* -----------------------------------------------------
-       BACKGROUND
+       CLEAR CANVAS
        ----------------------------------------------------- */
 
     ctx.clearRect(
@@ -948,26 +1229,62 @@ function generateGraphic() {
     );
 
 
-    ctx.fillStyle = navy;
+    /* -----------------------------------------------------
+       BACKGROUND PHOTO
+       ----------------------------------------------------- */
 
-    ctx.fillRect(
-        0,
-        0,
-        width,
-        height
-    );
+    if (
+        backgroundImage.complete &&
+        backgroundImage.naturalWidth > 0
+    ) {
+
+        drawImageCover(
+            ctx,
+            backgroundImage,
+            0,
+            0,
+            width,
+            height
+        );
+
+    }
+
+    /*
+        Fallback to Saintfield navy if bg.png
+        cannot be loaded for any reason.
+    */
+
+    else {
+
+        ctx.fillStyle =
+            navy;
+
+
+        ctx.fillRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+    }
 
 
     /* -----------------------------------------------------
        HEADER
        ----------------------------------------------------- */
 
-    ctx.textAlign = "center";
+    ctx.textAlign =
+        "center";
 
-    ctx.textBaseline = "middle";
+
+    ctx.textBaseline =
+        "middle";
 
 
-    ctx.fillStyle = white;
+    ctx.fillStyle =
+        white;
+
 
     ctx.font =
         "700 42px 'Barlow Condensed', Arial, sans-serif";
@@ -980,7 +1297,9 @@ function generateGraphic() {
     );
 
 
-    ctx.fillStyle = yellow;
+    ctx.fillStyle =
+        yellow;
+
 
     ctx.font =
         "900 58px 'Barlow Condensed', Arial, sans-serif";
@@ -995,19 +1314,25 @@ function generateGraphic() {
 
     const season =
         document
-            .getElementById("season")
+            .getElementById(
+                "season"
+            )
             .value
             .trim();
 
 
     const weekend =
         document
-            .getElementById("weekend")
+            .getElementById(
+                "weekend"
+            )
             .value
             .trim();
 
 
-    ctx.fillStyle = white;
+    ctx.fillStyle =
+        white;
+
 
     ctx.font =
         "500 26px 'Barlow Condensed', Arial, sans-serif";
@@ -1021,7 +1346,7 @@ function generateGraphic() {
 
 
     /* -----------------------------------------------------
-       PITCH
+       PITCH OVERLAY
        ----------------------------------------------------- */
 
     const pitchX =
@@ -1037,8 +1362,10 @@ function generateGraphic() {
         1145;
 
 
-    if (pitchImage.complete &&
-        pitchImage.naturalWidth > 0) {
+    if (
+        pitchImage.complete &&
+        pitchImage.naturalWidth > 0
+    ) {
 
         ctx.drawImage(
             pitchImage,
@@ -1056,50 +1383,130 @@ function generateGraphic() {
        ----------------------------------------------------- */
 
     const playerCards =
-        document.querySelectorAll(".player");
-
-
-    playerCards.forEach((card, index) => {
-
-        const name =
-            cleanText(
-                card
-                    .querySelector(".player-name")
-                    .value
-            );
-
-
-        const reason =
-            cleanText(
-                card
-                    .querySelector(".player-reason")
-                    .value
-            );
-
-
-        const [relativeX, relativeY] =
-            positions[index];
-
-
-        const x =
-            pitchX +
-            (relativeX * pitchWidth);
-
-
-        const y =
-            pitchY +
-            (relativeY * pitchHeight);
-
-
-        drawPlayer(
-            x,
-            y,
-            positionLabels[index],
-            name,
-            reason
+        document.querySelectorAll(
+            ".player"
         );
 
-    });
+
+    playerCards.forEach(
+        (card, index) => {
+
+            const name =
+                cleanText(
+                    card
+                        .querySelector(
+                            ".player-name"
+                        )
+                        .value
+                );
+
+
+            const reason =
+                cleanText(
+                    card
+                        .querySelector(
+                            ".player-reason"
+                        )
+                        .value
+                );
+
+
+            const [
+                relativeX,
+                relativeY
+            ] =
+                positions[index];
+
+
+            const x =
+                pitchX +
+                (relativeX *
+                 pitchWidth);
+
+
+            const y =
+                pitchY +
+                (relativeY *
+                 pitchHeight);
+
+
+            drawPlayer(
+                x,
+                y,
+                positionLabels[index],
+                name,
+                reason
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   WAIT FOR GRAPHIC ASSETS
+   ========================================================= */
+
+async function waitForGraphicAssets() {
+
+    await document.fonts.ready;
+
+
+    const imagePromises = [];
+
+
+    if (
+        !backgroundImage.complete ||
+        backgroundImage.naturalWidth === 0
+    ) {
+
+        imagePromises.push(
+
+            new Promise(resolve => {
+
+                backgroundImage.onload =
+                    resolve;
+
+                backgroundImage.onerror =
+                    resolve;
+
+            })
+
+        );
+
+    }
+
+
+    if (
+        !pitchImage.complete ||
+        pitchImage.naturalWidth === 0
+    ) {
+
+        imagePromises.push(
+
+            new Promise(resolve => {
+
+                pitchImage.onload =
+                    resolve;
+
+                pitchImage.onerror =
+                    resolve;
+
+            })
+
+        );
+
+    }
+
+
+    if (imagePromises.length > 0) {
+
+        await Promise.all(
+            imagePromises
+        );
+
+    }
 
 }
 
@@ -1110,15 +1517,7 @@ function generateGraphic() {
 
 async function downloadGraphic() {
 
-    /*
-        Wait for Barlow Condensed before drawing.
-
-        This prevents the browser exporting the PNG
-        using a fallback font if Google Fonts has not
-        finished loading.
-    */
-
-    await document.fonts.ready;
+    await waitForGraphicAssets();
 
 
     generateGraphic();
@@ -1126,20 +1525,36 @@ async function downloadGraphic() {
 
     const season =
         document
-            .getElementById("season")
+            .getElementById(
+                "season"
+            )
             .value
             .trim()
-            .replace(/[\/\\]/g, "-")
-            .replace(/\s+/g, "-");
+            .replace(
+                /[\/\\]/g,
+                "-"
+            )
+            .replace(
+                /\s+/g,
+                "-"
+            );
 
 
     const weekend =
         document
-            .getElementById("weekend")
+            .getElementById(
+                "weekend"
+            )
             .value
             .trim()
-            .replace(/[\/\\]/g, "-")
-            .replace(/\s+/g, "-");
+            .replace(
+                /[\/\\]/g,
+                "-"
+            )
+            .replace(
+                /\s+/g,
+                "-"
+            );
 
 
     const link =
@@ -1151,16 +1566,20 @@ async function downloadGraphic() {
 
 
     link.href =
-        canvas.toDataURL("image/png");
+        canvas.toDataURL(
+            "image/png"
+        );
 
 
-    document.body.appendChild(link);
+    document.body
+        .appendChild(link);
 
 
     link.click();
 
 
-    document.body.removeChild(link);
+    document.body
+        .removeChild(link);
 
 }
 
@@ -1170,12 +1589,14 @@ async function downloadGraphic() {
    ========================================================= */
 
 document
-    .getElementById("generateButton")
+    .getElementById(
+        "generateButton"
+    )
     .addEventListener(
         "click",
         async () => {
 
-            await document.fonts.ready;
+            await waitForGraphicAssets();
 
             generateGraphic();
 
@@ -1184,7 +1605,9 @@ document
 
 
 document
-    .getElementById("downloadButton")
+    .getElementById(
+        "downloadButton"
+    )
     .addEventListener(
         "click",
         downloadGraphic
@@ -1192,12 +1615,14 @@ document
 
 
 document
-    .getElementById("importButton")
+    .getElementById(
+        "importButton"
+    )
     .addEventListener(
         "click",
         async () => {
 
-            await document.fonts.ready;
+            await waitForGraphicAssets();
 
             importFromExcel();
 
@@ -1212,21 +1637,9 @@ document
 buildPlayerInputs();
 
 
-pitchImage.onload = async () => {
-
-    await document.fonts.ready;
-
-    generateGraphic();
-
-};
-
-
-if (pitchImage.complete) {
-
-    document.fonts.ready.then(() => {
+waitForGraphicAssets()
+    .then(() => {
 
         generateGraphic();
 
     });
-
-}
