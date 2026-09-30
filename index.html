@@ -26,6 +26,40 @@
 
     <main class="app">
 
+        <!-- =====================================================
+             TEAM TYPE TABS
+             ===================================================== -->
+
+        <div class="team-tabs">
+
+            <button
+                class="team-tab active"
+                type="button"
+                data-team="overall">
+                Overall
+            </button>
+
+            <button
+                class="team-tab"
+                type="button"
+                data-team="ladies">
+                Ladies
+            </button>
+
+            <button
+                class="team-tab"
+                type="button"
+                data-team="mens">
+                Mens
+            </button>
+
+        </div>
+
+
+        <!-- =====================================================
+             CONTROLS
+             ===================================================== -->
+
         <section class="controls">
 
             <div class="section-title">
@@ -95,6 +129,10 @@
         </section>
 
 
+        <!-- =====================================================
+             PREVIEW
+             ===================================================== -->
+
         <section class="preview">
 
             <div class="section-title">
@@ -102,11 +140,13 @@
             </div>
 
             <div class="canvas-wrapper">
+
                 <canvas
                     id="totwCanvas"
                     width="1080"
                     height="1350">
                 </canvas>
+
             </div>
 
         </section>
