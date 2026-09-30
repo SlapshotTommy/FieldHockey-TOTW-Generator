@@ -64,6 +64,80 @@ header h2 {
 
 
 /* =========================================================
+   TEAM TYPE TABS
+   ========================================================= */
+
+.team-tabs {
+    grid-column: 1 / -1;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    width: 100%;
+    max-width: 620px;
+
+    margin: 0 auto -5px;
+
+    background: #202133;
+
+    border: 3px solid #202133;
+    border-radius: 8px;
+
+    overflow: hidden;
+}
+
+.team-tab {
+    width: 100%;
+
+    margin: 0;
+
+    padding: 13px 20px;
+
+    border: 0;
+    border-radius: 0;
+
+    background: #202133;
+
+    color: #ffffff;
+
+    font-family: "Barlow Condensed", Arial, Helvetica, sans-serif;
+
+    font-size: 18px;
+    font-weight: 800;
+
+    letter-spacing: 0.6px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.team-tab + .team-tab {
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.team-tab:hover {
+    opacity: 1;
+
+    background: #2c2d48;
+}
+
+.team-tab.active {
+    background: #f2cf44;
+
+    color: #202133;
+}
+
+.team-tab.active:hover {
+    background: #f2cf44;
+
+    color: #202133;
+}
+
+
+/* =========================================================
    SECTION HEADINGS
    ========================================================= */
 
@@ -294,6 +368,26 @@ button:hover {
 
     .app {
         grid-template-columns: 1fr;
+    }
+
+    .team-tabs {
+        max-width: none;
+    }
+
+}
+
+
+@media (max-width: 520px) {
+
+    .app {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .team-tab {
+        padding: 11px 8px;
+
+        font-size: 16px;
     }
 
 }
