@@ -1,3 +1,13 @@
+/* =========================================================
+   SAINTFIELD HOCKEY CLUB
+   TEAM OF THE WEEK GENERATOR
+   ========================================================= */
+
+
+/* =========================================================
+   FORMATION
+   ========================================================= */
+
 const positions = [
     [0.50, 0.82], // GK
 
@@ -162,6 +172,147 @@ pitchImage.src =
 
 
 let selectedSwapIndex = null;
+
+
+/* =========================================================
+   TEAM WORKSPACES
+   ========================================================= */
+
+let activeTeam = "overall";
+
+function clonePlayers(players) {
+
+    return players.map(player => ({
+        name: player.name,
+        squad: player.squad,
+        reason: player.reason
+    }));
+
+}
+
+function createBlankPlayers() {
+
+    return positionLabels.map(() => ({
+        name: "",
+        squad: "",
+        reason: ""
+    }));
+
+}
+
+const teamStates = {
+
+    overall: {
+        season: "2026/27",
+        weekend: "Weekend 3",
+        importText: "",
+        players: clonePlayers(samplePlayers)
+    },
+
+    ladies: {
+        season: "2026/27",
+        weekend: "Weekend 3",
+        importText: "",
+        players: createBlankPlayers()
+    },
+
+    mens: {
+        season: "2026/27",
+        weekend: "Weekend 3",
+        importText: "",
+        players: createBlankPlayers()
+    }
+
+};
+
+const teamDisplayNames = {
+    overall: "TEAM OF THE WEEK",
+    ladies: "LADIES TEAM OF THE WEEK",
+    mens: "MENS TEAM OF THE WEEK"
+};
+
+const teamDownloadNames = {
+    overall: "Saintfield-TOTW",
+    ladies: "Saintfield-Ladies-TOTW",
+    mens: "Saintfield-Mens-TOTW"
+};
+
+function saveCurrentTeamState() {
+
+    const state = teamStates[activeTeam];
+
+    state.season = document
+        .getElementById("season")
+        .value;
+
+    state.weekend = document
+        .getElementById("weekend")
+        .value;
+
+    state.importText = document
+        .getElementById("excelImport")
+        .value;
+
+    const playerCards = document.querySelectorAll(".player");
+
+    state.players = Array.from(playerCards).map(card => ({
+        name: card.querySelector(".player-name").value,
+        squad: card.querySelector(".player-squad").value,
+        reason: card.querySelector(".player-reason").value
+    }));
+
+}
+
+function loadTeamState(teamKey) {
+
+    const state = teamStates[teamKey];
+
+    document.getElementById("season").value = state.season;
+    document.getElementById("weekend").value = state.weekend;
+    document.getElementById("excelImport").value = state.importText;
+
+    const playerCards = document.querySelectorAll(".player");
+
+    state.players.forEach((player, index) => {
+
+        const card = playerCards[index];
+
+        card.querySelector(".player-name").value = player.name;
+        card.querySelector(".player-squad").value = player.squad;
+        card.querySelector(".player-reason").value = player.reason;
+
+        card.classList.remove("swap-selected");
+
+    });
+
+    selectedSwapIndex = null;
+
+    setImportStatus("");
+
+    generateGraphic();
+
+}
+
+function switchTeam(teamKey) {
+
+    if (!teamStates[teamKey] || teamKey === activeTeam) {
+        return;
+    }
+
+    saveCurrentTeamState();
+
+    activeTeam = teamKey;
+
+    document.querySelectorAll(".team-tab").forEach(tab => {
+        tab.classList.toggle(
+            "active",
+            tab.dataset.team === activeTeam
+        );
+    });
+
+    loadTeamState(activeTeam);
+
+}
 
 
 /* =========================================================
@@ -390,14 +541,17 @@ function buildPlayerInputs() {
 
     document
         .querySelectorAll(
-            ".player-name, .player-reason"
+            ".player-name, .player-squad, .player-reason"
         )
         .forEach(
             input => {
 
                 input.addEventListener(
                     "input",
-                    generateGraphic
+                    () => {
+                        saveCurrentTeamState();
+                        generateGraphic();
+                    }
                 );
 
             }
@@ -1022,6 +1176,9 @@ function importFromExcel() {
     );
 
 
+    saveCurrentTeamState();
+
+
     /*
         Redraw immediately after import.
 
@@ -1503,7 +1660,7 @@ function generateGraphic() {
 
 
     ctx.fillText(
-        "TEAM OF THE WEEK",
+        teamDisplayNames[activeTeam],
         width / 2,
         91
     );
@@ -1808,7 +1965,7 @@ async function downloadGraphic() {
 
 
     link.download =
-        `Saintfield-TOTW-${season}-${weekend}.png`;
+        `${teamDownloadNames[activeTeam]}-${season}-${weekend}.png`;
 
 
     link.href =
@@ -1837,6 +1994,32 @@ async function downloadGraphic() {
 /* =========================================================
    EVENT LISTENERS
    ========================================================= */
+
+
+/* ---------------------------------------------------------
+   TEAM TYPE TABS
+   --------------------------------------------------------- */
+
+document
+    .querySelectorAll(
+        ".team-tab"
+    )
+    .forEach(
+        tab => {
+
+            tab.addEventListener(
+                "click",
+                () => {
+
+                    switchTeam(
+                        tab.dataset.team
+                    );
+
+                }
+            );
+
+        }
+    );
 
 
 /* ---------------------------------------------------------
@@ -1881,7 +2064,10 @@ document
     )
     .addEventListener(
         "input",
-        generateGraphic
+        () => {
+            saveCurrentTeamState();
+            generateGraphic();
+        }
     );
 
 
@@ -1895,7 +2081,10 @@ document
     )
     .addEventListener(
         "input",
-        generateGraphic
+        () => {
+            saveCurrentTeamState();
+            generateGraphic();
+        }
     );
 
 
@@ -1904,6 +2093,7 @@ document
    ========================================================= */
 
 buildPlayerInputs();
+loadTeamState(activeTeam);
 
 
 /*
