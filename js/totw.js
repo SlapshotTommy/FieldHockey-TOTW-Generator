@@ -897,6 +897,419 @@ function importFromExcel() {
 
     /* -----------------------------------------------------
        READ ROWS
+
+       EXPECTED COLUMN ORDER:
+
+       1. Season
+       2. Weekend
+       3. TOTW Position
+       4. Player
+       5. Squad
+       6. Reason
+       7. POTM
+
+       POTM:
+       Yes = append "POTM" as another reason bubble
+       No  = do nothing
+       ----------------------------------------------------- */
+
+    for (
+        let rowNumber = 0;
+        rowNumber < rows.length;
+        rowNumber++
+    ) {
+
+        const row =
+            rows[rowNumber];
+
+
+        if (
+            row.length < 7
+        ) {
+
+            setImportStatus(
+                `Row ${rowNumber + 1} does not contain all 7 required columns.`,
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const season =
+            cleanText(
+                row[0]
+            );
+
+
+        const weekend =
+            cleanText(
+                row[1]
+            );
+
+
+        const totwPosition =
+            cleanText(
+                row[2]
+            )
+                .toLowerCase();
+
+
+        const player =
+            cleanText(
+                row[3]
+            );
+
+
+        const squad =
+            cleanText(
+                row[4]
+            );
+
+
+        /*
+            Column 6 is the normal Reason field.
+
+            Example:
+            "2 Goals | POTG | 2–5 Loss"
+        */
+
+        const baseReason =
+            cleanText(
+                row[5]
+            );
+
+
+        /*
+            Column 7 is the POTM flag.
+
+            "Yes" = add a POTM bubble
+            "No"  = add nothing
+        */
+
+        const potm =
+            cleanText(
+                row[6]
+            )
+                .toLowerCase();
+
+
+        /*
+            Build the final reason string.
+
+            drawPlayer() already splits this on "|",
+            so POTM automatically becomes its own
+            separate bubble underneath the others.
+        */
+
+        const reason =
+            potm === "yes"
+                ? [baseReason, "POTM"]
+                    .filter(Boolean)
+                    .join(" | ")
+                : baseReason;
+
+
+        if (
+            !(
+                totwPosition
+                in importPositionMap
+            )
+        ) {
+
+            setImportStatus(
+                `Unknown TOTW Position: ${row[2]}`,
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const playerIndex =
+            importPositionMap[
+                totwPosition
+            ];
+
+
+        if (
+            importedPlayers[
+                playerIndex
+            ] !== null
+        ) {
+
+            setImportStatus(
+                `Duplicate TOTW Position: ${row[2]}`,
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        importedPlayers[
+            playerIndex
+        ] = {
+
+            name: player,
+
+            squad: squad,
+
+            reason: reason
+
+        };
+
+
+        if (
+            !importedSeason
+        ) {
+
+            importedSeason =
+                season;
+
+        }
+
+
+        if (
+            !importedWeekend
+        ) {
+
+            importedWeekend =
+                weekend;
+
+        }
+
+    }
+
+
+    /* -----------------------------------------------------
+       CHECK ALL POSITIONS EXIST
+       ----------------------------------------------------- */
+
+    const missingPositions = [];
+
+
+    Object
+        .entries(
+            importPositionMap
+        )
+        .forEach(
+            (
+                [
+                    positionName,
+                    index
+                ]
+            ) => {
+
+                if (
+                    !importedPlayers[
+                        index
+                    ]
+                ) {
+
+                    missingPositions
+                        .push(
+                            positionName
+                        );
+
+                }
+
+            }
+        );
+
+
+    if (
+        missingPositions.length > 0
+    ) {
+
+        setImportStatus(
+            `Missing positions: ${missingPositions.join(", ")}`,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------------------
+       WRITE TEAM DETAILS
+       ----------------------------------------------------- */
+
+    document
+        .getElementById(
+            "season"
+        )
+        .value =
+        importedSeason;
+
+
+    document
+        .getElementById(
+            "weekend"
+        )
+        .value =
+        importedWeekend;
+
+
+    /* -----------------------------------------------------
+       WRITE PLAYER DETAILS
+       ----------------------------------------------------- */
+
+    const playerCards =
+        document.querySelectorAll(
+            ".player"
+        );
+
+
+    importedPlayers
+        .forEach(
+            (
+                player,
+                index
+            ) => {
+
+                const card =
+                    playerCards[
+                        index
+                    ];
+
+
+                card
+                    .querySelector(
+                        ".player-name"
+                    )
+                    .value =
+                    player.name;
+
+
+                card
+                    .querySelector(
+                        ".player-squad"
+                    )
+                    .value =
+                    player.squad;
+
+
+                card
+                    .querySelector(
+                        ".player-reason"
+                    )
+                    .value =
+                    player.reason;
+
+            }
+        );
+
+
+    selectedSwapIndex =
+        null;
+
+
+    playerCards.forEach(
+        card =>
+            card
+                .classList
+                .remove(
+                    "swap-selected"
+                )
+    );
+
+
+    setImportStatus(
+        "Team of the Week imported successfully.",
+        "success"
+    );
+
+
+    saveCurrentTeamState();
+
+
+    /*
+        Redraw immediately after import.
+
+        This does NOT wait for the asset-loading
+        function, so Import XI remains responsive.
+    */
+
+    generateGraphic();
+
+}
+
+    /* -----------------------------------------------------
+       REMOVE HEADER ROW IF PRESENT
+       ----------------------------------------------------- */
+
+    const firstRow =
+        rows[0]
+            .map(cleanText)
+            .map(
+                value =>
+                    value.toLowerCase()
+            );
+
+
+    const looksLikeHeader =
+        firstRow.includes(
+            "season"
+        ) &&
+        firstRow.includes(
+            "weekend"
+        ) &&
+        firstRow.includes(
+            "totw position"
+        ) &&
+        firstRow.includes(
+            "player"
+        ) &&
+        firstRow.includes(
+            "squad"
+        ) &&
+        firstRow.includes(
+            "reason"
+        );
+
+
+    if (looksLikeHeader) {
+
+        rows.shift();
+
+    }
+
+
+    /* -----------------------------------------------------
+       VALIDATE NUMBER OF PLAYERS
+       ----------------------------------------------------- */
+
+    if (
+        rows.length !== 11
+    ) {
+
+        setImportStatus(
+            `Expected 11 players but found ${rows.length}.`,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const importedPlayers =
+        new Array(11)
+            .fill(null);
+
+
+    let importedSeason = "";
+
+    let importedWeekend = "";
+
+
+    /* -----------------------------------------------------
+       READ ROWS
        ----------------------------------------------------- */
 
     for (
