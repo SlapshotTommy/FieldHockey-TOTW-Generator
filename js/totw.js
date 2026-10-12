@@ -1004,13 +1004,17 @@ function importFromExcel() {
         */
 
         const reason =
-            potm === "yes"
-                ? [baseReason, "POTM"]
-                    .filter(Boolean)
-                    .join(" | ")
-                : baseReason;
-
-
+    potm === "yes" &&
+    !baseReason
+        .split("|")
+        .some(item =>
+            /^(POTG|POTM)$/i.test(item.trim())
+        )
+        ? [baseReason, "POTG"]
+            .filter(Boolean)
+            .join(" | ")
+        : baseReason;
+       
         if (
             !(
                 totwPosition
